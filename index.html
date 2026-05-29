@@ -1,0 +1,1053 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Masters Programs Search</title>
+  <link rel="icon" href="data:,">
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: 'Georgia','Times New Roman',serif; background:#09090b; color:#f4f4f5; min-height:100vh; }
+
+    .header { border-bottom:1px solid #27272a; padding:1.6rem 1.5rem; display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; }
+    .header-left { flex:1; min-width:0; }
+    .header-eyebrow { font-family:'Courier New',monospace; font-size:.67rem; letter-spacing:.15em; text-transform:uppercase; color:#f59e0b; margin-bottom:.3rem; }
+    .header h1 { font-size:1.6rem; font-weight:700; color:#f4f4f5; letter-spacing:-.02em; }
+    .header p { color:#71717a; font-size:.8rem; margin-top:.2rem; }
+
+    /* My Schools button */
+    .my-schools-btn {
+      flex-shrink:0; margin-top:.25rem;
+      background:#f59e0b; color:#09090b;
+      border:none; border-radius:6px;
+      padding:.5rem 1rem;
+      font-family:'Courier New',monospace;
+      font-size:.68rem; font-weight:700;
+      letter-spacing:.06em; text-transform:uppercase;
+      cursor:pointer; white-space:nowrap;
+      transition:background .15s;
+    }
+    .my-schools-btn:hover { background:#fbbf24; }
+
+    /* Modal overlay */
+    .modal-overlay {
+      display:none; position:fixed; inset:0;
+      background:rgba(0,0,0,.75); z-index:100;
+      align-items:flex-start; justify-content:center;
+      padding:2rem 1rem; overflow-y:auto;
+    }
+    .modal-overlay.open { display:flex; }
+    .modal {
+      background:#111113; border:1px solid #3f3f46;
+      border-radius:10px; width:100%; max-width:720px;
+      margin:auto;
+    }
+    .modal-header {
+      display:flex; align-items:center; justify-content:space-between;
+      padding:1.1rem 1.4rem; border-bottom:1px solid #27272a;
+    }
+    .modal-title {
+      font-size:1rem; font-weight:700; color:#f4f4f5; letter-spacing:-.01em;
+    }
+    .modal-close {
+      background:none; border:none; color:#71717a;
+      font-size:1.3rem; cursor:pointer; line-height:1;
+      padding:.2rem .4rem; border-radius:4px;
+    }
+    .modal-close:hover { color:#f4f4f5; background:#27272a; }
+    .modal-body { padding:1.1rem 1.4rem; }
+
+    /* School sections in modal */
+    .ms-school {
+      margin-bottom:1.4rem; padding-bottom:1.4rem;
+      border-bottom:1px solid #27272a;
+    }
+    .ms-school:last-child { margin-bottom:0; padding-bottom:0; border-bottom:none; }
+    .ms-school-name {
+      font-size:.85rem; font-weight:700; color:#f4f4f5;
+      margin-bottom:.5rem; display:flex; align-items:center; gap:.6rem;
+    }
+    .ms-school-loc {
+      font-family:'Courier New',monospace; font-size:.62rem;
+      color:#52525b; font-weight:400;
+    }
+    .ms-programs { display:flex; flex-direction:column; gap:.35rem; }
+    .ms-prog {
+      display:flex; align-items:flex-start; gap:.6rem;
+      background:#18181b; border:1px solid #27272a;
+      border-radius:5px; padding:.5rem .7rem;
+    }
+    .ms-prog-badge {
+      font-family:'Courier New',monospace; font-size:.58rem; font-weight:700;
+      padding:.1rem .35rem; border-radius:3px; white-space:nowrap;
+      margin-top:1px; flex-shrink:0;
+    }
+    .ms-prog-info { min-width:0; }
+    .ms-prog-name { font-size:.78rem; color:#f4f4f5; font-weight:600; line-height:1.3; }
+    .ms-prog-tab { font-size:.65rem; color:#71717a; font-family:'Courier New',monospace; margin-top:.15rem; }
+
+    .primary-tabs { display:flex; border-bottom:1px solid #27272a; padding:0 1.5rem; background:#09090b; }
+    .primary-tab { background:none; border:none; border-bottom:2px solid transparent; padding:.85rem 1.2rem; font-family:'Courier New',monospace; font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; color:#52525b; margin-bottom:-1px; transition:color .2s,border-color .2s; white-space:nowrap; }
+    .primary-tab:hover { color:#d4d4d8; }
+    .primary-tab.active { border-bottom-color:#f59e0b; color:#f59e0b; }
+
+    .secondary-tabs { display:flex; gap:.3rem; flex-wrap:wrap; padding:.85rem 1.5rem 0; border-bottom:1px solid #27272a; background:#111113; }
+    .sec-tab { background:none; border:1px solid #3f3f46; border-bottom:none; padding:.4rem .75rem; font-family:'Courier New',monospace; font-size:.62rem; letter-spacing:.05em; text-transform:uppercase; cursor:pointer; color:#71717a; border-radius:4px 4px 0 0; transition:all .15s; white-space:nowrap; }
+    .sec-tab:hover { color:#d4d4d8; border-color:#52525b; }
+    .sec-tab.active { background:#09090b; color:#f59e0b; border-color:#f59e0b; }
+
+    .content { padding:1.4rem 1.5rem; max-width:900px; }
+    .main-panel { display:none; }
+    .main-panel.active { display:block; }
+    .prog-panel { display:none; }
+    .prog-panel.active { display:block; }
+
+    .panel-header { margin-bottom:1.1rem; }
+    .panel-title { font-size:.95rem; font-weight:600; color:#f4f4f5; margin-bottom:.2rem; }
+    .panel-desc { font-size:.76rem; color:#71717a; line-height:1.55; }
+
+    .legend { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1.1rem; }
+    .legend-item { display:flex; align-items:center; gap:.4rem; }
+    .legend-badge { font-size:.6rem; font-weight:700; padding:.1rem .42rem; border-radius:3px; font-family:'Courier New',monospace; }
+    .legend-label { font-size:.7rem; color:#71717a; }
+
+    .cards { display:flex; flex-direction:column; gap:.5rem; }
+    .card { border-radius:7px; overflow:hidden; }
+
+    .tier-1   { background:#052e16; border:1px solid #166534; }
+    .tier-2   { background:#082f49; border:1px solid #075985; }
+    .tier-3   { background:#27272a; border:1px solid #3f3f46; }
+    .card-tech{ background:#140f1f; border:1px solid #3730a3; }
+    .card-fin { background:#0f0f1a; border:1px solid #4c1d95; }
+    .card-mba { background:#1c1008; border:1px solid #78350f; }
+    .card-dual{ background:#091a12; border:1px solid #14532d; }
+    .card-ds  { background:#0c1520; border:1px solid #1e40af; }
+    .company-card { background:#18181b; border:1px solid #3f3f46; }
+
+    .card-header { width:100%; background:none; border:none; text-align:left; padding:.85rem 1.05rem; display:flex; align-items:flex-start; justify-content:space-between; gap:.7rem; cursor:pointer; }
+    .card-header:hover { filter:brightness(1.09); }
+    .card-left { display:flex; align-items:flex-start; gap:.6rem; flex:1; min-width:0; }
+
+    .tier-badge { font-size:.58rem; font-weight:700; padding:.1rem .38rem; border-radius:3px; white-space:nowrap; margin-top:2px; font-family:'Courier New',monospace; flex-shrink:0; }
+    .tier-1  .tier-badge { background:#22c55e; color:#052e16; }
+    .tier-2  .tier-badge { background:#38bdf8; color:#082f49; }
+    .tier-3  .tier-badge { background:#a1a1aa; color:#18181b; }
+    .card-tech .tier-badge { background:#818cf8; color:#140f1f; }
+    .card-fin  .tier-badge { background:#a78bfa; color:#0f0f1a; }
+    .card-mba  .tier-badge { background:#f97316; color:#1c1008; }
+    .card-dual .tier-badge { background:#4ade80; color:#091a12; }
+    .card-ds   .tier-badge { background:#60a5fa; color:#0c1520; }
+
+    .card-title { font-size:.83rem; font-weight:600; color:#f4f4f5; line-height:1.3; }
+    .card-subtitle { font-size:.7rem; color:#71717a; margin-top:.15rem; }
+    .card-right { display:flex; align-items:center; gap:.6rem; flex-shrink:0; }
+    .card-location { font-size:.66rem; color:#52525b; font-family:'Courier New',monospace; }
+    .toggle-icon { font-size:1rem; color:#52525b; width:15px; text-align:center; }
+
+    .card-body { display:none; padding:.85rem 1.05rem 1.05rem; border-top:1px solid rgba(255,255,255,0.07); }
+    .card-body.open { display:block; }
+    .meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-bottom:.75rem; }
+    .meta-grid .full { grid-column:1/-1; }
+    .field-label { font-size:.58rem; text-transform:uppercase; letter-spacing:.1em; color:#52525b; font-family:'Courier New',monospace; margin-bottom:.18rem; }
+    .field-value { font-size:.78rem; color:#d4d4d8; line-height:1.55; }
+    .why-block { margin-top:.6rem; }
+    .why-block .field-value { font-size:.8rem; line-height:1.62; }
+    .tags { display:flex; flex-wrap:wrap; gap:.32rem; margin-top:.75rem; }
+    .tag { font-size:.6rem; padding:.16rem .48rem; border-radius:999px; font-family:'Courier New',monospace; }
+    .tag-0 { background:#451a03; color:#fcd34d; }
+    .tag-1 { background:#1e1b4b; color:#a5b4fc; }
+    .tag-2 { background:#4c0519; color:#fca5a5; }
+    .tag-3 { background:#042f2e; color:#5eead4; }
+    .tag-4 { background:#2e1065; color:#d8b4fe; }
+
+    .co-name { font-size:.83rem; font-weight:600; color:#f4f4f5; }
+    .co-type { font-size:.6rem; padding:.1rem .42rem; border-radius:999px; background:#27272a; color:#a1a1aa; border:1px solid #3f3f46; font-family:'Courier New',monospace; white-space:nowrap; }
+    .co-roles-preview { display:flex; flex-wrap:wrap; gap:.2rem; margin-top:.32rem; }
+    .co-role-preview { font-size:.68rem; color:#d97706; }
+    .roles-list { display:flex; flex-wrap:wrap; gap:.32rem; margin-bottom:.75rem; }
+    .role-tag { font-size:.66rem; background:#451a03; color:#fcd34d; border:1px solid #78350f; padding:.2rem .48rem; border-radius:4px; font-family:'Courier New',monospace; }
+    .note-box { background:#27272a; border-radius:5px; padding:.6rem .85rem; margin-top:.6rem; }
+
+    /* Sector group headers */
+    .sector-group { margin-bottom:1.6rem; }
+    .sector-header { padding:.55rem .9rem; border-radius:6px 6px 0 0; margin-bottom:.4rem; }
+    .sector-label { font-family:'Courier New',monospace; font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+    .sector-desc { font-size:.72rem; color:#a1a1aa; margin-top:.2rem; line-height:1.45; }
+
+    @media(max-width:520px){
+      .meta-grid{grid-template-columns:1fr;}
+      .card-location{display:none;}
+      .header h1{font-size:1.25rem;}
+      .sec-tab{font-size:.58rem; padding:.35rem .55rem;}
+    }
+  </style>
+</head>
+<body>
+
+<div class="header">
+  <div class="header-left">
+    <p class="header-eyebrow">Career Reference</p>
+    <h1>Masters Programs Search</h1>
+    <p>Energy Markets, Data Science &amp; Target Companies</p>
+  </div>
+  <button class="my-schools-btn" onclick="openMySchools()">⭐ My Schools</button>
+</div>
+
+<!-- My Schools Modal -->
+<div class="modal-overlay" id="mySchoolsModal" onclick="closeOnOverlay(event)">
+  <div class="modal">
+    <div class="modal-header">
+      <div class="modal-title">My Target Schools</div>
+      <button class="modal-close" onclick="closeMySchools()">✕</button>
+    </div>
+    <div class="modal-body" id="mySchoolsBody"></div>
+  </div>
+</div>
+
+<div class="primary-tabs">
+  <button class="primary-tab active" onclick="switchPrimary('programs',this)">Energy Programs</button>
+  <button class="primary-tab" onclick="switchPrimary('datascience',this)">Data Science Programs</button>
+  <button class="primary-tab" onclick="switchPrimary('companies',this)">Companies &amp; Roles</button>
+  <button class="primary-tab" onclick="switchPrimary('research',this)">Research Groups</button>
+</div>
+
+<div class="secondary-tabs" id="sec-tabs">
+  <button class="sec-tab active" onclick="switchSec('energy-econ',this)">Energy Econ &amp; Policy</button>
+  <button class="sec-tab" onclick="switchSec('tech',this)">Tech &amp; Interdisciplinary</button>
+  <button class="sec-tab" onclick="switchSec('finance',this)">Finance &amp; Economics</button>
+  <button class="sec-tab" onclick="switchSec('mba',this)">MBA — Energy</button>
+  <button class="sec-tab" onclick="switchSec('dual',this)">Dual Degrees</button>
+  <button class="sec-tab" onclick="switchSec('startups',this)">Startup Ecosystems</button>
+</div>
+
+<div class="content">
+
+  <div id="main-programs" class="main-panel active">
+
+    <!-- ENERGY ECON & POLICY -->
+    <div id="prog-energy-econ" class="prog-panel active">
+      <div class="panel-header">
+        <div class="panel-title">Energy Economics &amp; Policy</div>
+        <div class="panel-desc">Dedicated programs at the intersection of energy markets, economic modeling, and policy. Most direct path to analyst roles at Wood Mac, Aurora, BloombergNEF, and similar firms. <strong style="color:#fcd34d;">★ = RA/TA tuition waiver confirmed by university policy for master's students.</strong></div>
+      </div>
+      <div class="legend">
+        <div class="legend-item"><span class="legend-badge" style="background:#22c55e;color:#052e16;">T1</span><span class="legend-label">Tier 1 — Strong Fit</span></div>
+        <div class="legend-item"><span class="legend-badge" style="background:#38bdf8;color:#082f49;">T2</span><span class="legend-label">Tier 2 — Policy + Market</span></div>
+        <div class="legend-item"><span class="legend-badge" style="background:#a1a1aa;color:#18181b;">T3</span><span class="legend-label">Tier 3 — Worth Knowing</span></div>
+        <div class="legend-item"><span class="legend-badge" style="background:#fcd34d;color:#1c1008;">★RA</span><span class="legend-label">RA/TA tuition waiver confirmed</span></div>
+      </div>
+      <div class="cards" id="energy-econ-list"></div>
+    </div>
+
+    <!-- TECH & INTERDISCIPLINARY -->
+    <div id="prog-tech" class="prog-panel">
+      <div class="panel-header">
+        <div class="panel-title">Technology &amp; Interdisciplinary Energy</div>
+        <div class="panel-desc">Programs blending engineering, systems modeling, and energy markets. Good fit for pairing Python/optimization skills with deep energy domain knowledge. Some require engineering or hard-science undergraduate backgrounds.</div>
+      </div>
+      <div class="cards" id="tech-list"></div>
+    </div>
+
+    <!-- FINANCE & ECONOMICS -->
+    <div id="prog-finance" class="prog-panel">
+      <div class="panel-header">
+        <div class="panel-title">Finance &amp; Economics (Pure)</div>
+        <div class="panel-desc">Traditional MS Finance or MS Economics programs. Less energy-specific but strong in quant rigor, econometrics, and financial modeling. Best aimed at commodity trading, economic consulting, or energy investment, especially when paired with energy work experience.</div>
+      </div>
+      <div class="cards" id="finance-list"></div>
+    </div>
+
+    <!-- MBA -->
+    <div id="prog-mba" class="prog-panel">
+      <div class="panel-header">
+        <div class="panel-title">MBA with Energy Specialization</div>
+        <div class="panel-desc">Best for moving into energy strategy, commercial leadership, or investment roles rather than pure analyst tracks. Typically requires 3–5 years of work experience. Higher salary ceiling but longer commitment and cost.</div>
+      </div>
+      <div class="cards" id="mba-list"></div>
+    </div>
+
+    <!-- DUAL -->
+    <div id="prog-dual" class="prog-panel">
+      <div class="panel-header">
+        <div class="panel-title">Dual Degrees — MBA/JD &amp; MBA/MPP</div>
+        <div class="panel-desc">For roles at the intersection of energy markets, regulation, and public policy. Think utility strategy, FERC regulatory affairs, energy transaction work, or senior government roles. High commitment (3–4 years) but opens distinct career paths a single degree cannot.</div>
+      </div>
+      <div class="cards" id="dual-list"></div>
+    </div>
+
+    <!-- STARTUP ECOSYSTEMS -->
+    <div id="prog-startups" class="prog-panel">
+      <div class="panel-header">
+        <div class="panel-title">Startup Ecosystems &amp; Incubators</div>
+        <div class="panel-desc">Universities with the strongest startup infrastructure for energy, cleantech, and deep tech ventures. Relevant if you want to launch a company during or after your degree, or join an early-stage energy startup post-graduation. Rankings based on PitchBook VC-backed founder data and incubator quality.</div>
+      </div>
+      <div class="cards" id="startups-list"></div>
+    </div>
+
+  </div>
+
+  <!-- COMPANIES -->
+  <div id="main-companies" class="main-panel">
+    <div class="cards" id="companies-list"></div>
+  </div>
+
+  <!-- DATA SCIENCE -->
+  <div id="main-datascience" class="main-panel">
+    <div class="panel-header">
+      <div class="panel-title">MS in Data Science — US Programs</div>
+      <div class="panel-desc">One-year and accelerated data science programs in the US. GPA and GRE requirements vary widely — many top programs are test-optional and evaluate holistically. Strong quantitative background and relevant work experience can offset lower GPAs. Always verify requirements directly with the program before applying.</div>
+    </div>
+    <div class="cards" id="ds-list"></div>
+  </div>
+
+  <!-- RESEARCH GROUPS -->
+  <div id="main-research" class="main-panel">
+    <div class="panel-header">
+      <div class="panel-title">Target Research Groups &amp; Faculty</div>
+      <div class="panel-desc">Specific research groups and faculty at your top schools where RA positions are realistic. Emailing a professor directly before applying — with a specific reference to their work — is how most funded master's positions are actually secured. The more specific your email, the better.</div>
+    </div>
+    <div class="cards" id="research-list"></div>
+  </div>
+
+</div>
+
+<script>
+const tagClasses = ["tag-0","tag-1","tag-2","tag-3","tag-4"];
+
+/* ─── ENERGY ECON & POLICY ─── */
+const energyEconPrograms = [
+  // Tier 1
+  {tier:1,school:"Rice University",program:"Master of Energy Economics (MEECON)",location:"Houston, TX",duration:"12 months",focus:"Energy markets, asset decisions, capital allocation, market forecasting",why:"Best single fit for energy markets analyst roles. Houston proximity gives direct access to Wood Mac, Shell, ExxonMobil, and trading firm recruiting. Highly respected in the field. Note: professional master's — RA funding uncommon but not impossible if you identify a faculty research project before applying.",tags:["Energy Economics","Markets","Quantitative"]},
+  {tier:1,school:"★ Colorado School of Mines",program:"MS in Mineral and Energy Economics",location:"Golden, CO",duration:"~18–24 months",focus:"Price forecasting, asset valuation, utility regulation, renewables, environmental economics",why:"Consistent feeder into Wood Mac and energy consulting. Strong quant training pairs well with Python and optimization work. RA FUNDING CONFIRMED: appointments at 0.25 FTE or above receive full tuition remission. Stipend is $28,500/year (9-month, 2025-26). Contact faculty before applying to negotiate an appointment.",tags:["Energy Economics","Forecasting","★ RA Funding Confirmed","Quantitative"]},
+  {tier:1,school:"★ UT Austin",program:"MS Economics / McCombs Energy Management",location:"Austin, TX",duration:"~18 months",focus:"Energy markets, ERCOT exposure, cleantech analytics, power market fundamentals",why:"Strong ties to ERCOT, Texas PUC, and cleantech firms. Aurora has an Austin graduate analyst program. RA FUNDING CONFIRMED: non-resident students employed half-time as TA/GRA receive the Resident Tuition Entitlement — waiver of out-of-state portion, charged in-state tuition. GRAs also eligible for the tax-exempt Tuition Reduction Benefit. LBJ School and Cockrell Engineering are the most active departments for RA placements.",tags:["Power Markets","★ RA Funding Confirmed","Energy Finance","Policy"]},
+  {tier:1,school:"University of Houston — Bauer",program:"MS in Global Energy Leadership / MS Finance (Energy specialization)",location:"Houston, TX",duration:"18–22 months",focus:"Energy management, energy finance, trading, derivatives, energy risk management",why:"Houston location is unmatched for energy industry access. Gutierrez Energy Management Institute (GEMI) is purpose-built for energy business education with industry executives teaching core courses. MS Finance students can specialize entirely in energy finance including derivatives and risk management.",tags:["Energy Finance","Houston","Industry Access","Risk"]},
+  // Tier 2
+  {tier:2,school:"Columbia University",program:"MPA/MIA — Climate, Energy & Environment (SIPA)",location:"New York, NY",duration:"2 years",focus:"Energy policy, markets, finance, regulatory strategy",why:"Strong brand and network, especially for roles with any policy interface (Tesla Energy, BloombergNEF, consulting). Center on Global Energy Policy hosts practitioners constantly and connects students directly to energy industry leadership.",tags:["Policy","Energy Markets","Network"]},
+  {tier:2,school:"NYU SPS — Center for Global Affairs",program:"MS in Sustainability and Global Energy Practice",location:"New York, NY",duration:"~18–24 months",focus:"Global energy systems, sustainability management, energy policy, regulatory compliance, risk analytics, energy security — practitioner-oriented curriculum",why:"NYU's most directly energy-relevant graduate program. Covers energy policy, regulatory frameworks, global energy systems, and sustainability risk analytics. NYU is not a humanities school at the graduate level — this is a practitioner-oriented program taught by professionals actively working in energy and sustainability. NYC location gives access to NY Green Bank, Con Edison, grid operators, and the city's growing climate finance sector. Wagner MPA grads have gone directly into NY Green Bank renewable energy roles. No dedicated energy markets concentration, but valuable for policy-adjacent roles.",tags:["Energy Policy","NYC","Sustainability","Global Energy","Practitioner"]},
+  {tier:2,school:"University of Maryland",program:"MS in Applied Economics (Energy focus)",location:"College Park, MD",duration:"~18 months",focus:"Econometrics, energy market modeling, environmental economics",why:"Underrated for this path. DC proximity means access to FERC, EIA, and consulting shops. More affordable than most on this list with strong quant training. Good for regulatory economics and energy policy roles in government or consulting.",tags:["Applied Economics","Econometrics","DC Access"]},
+  {tier:2,school:"Johns Hopkins University",program:"MS in Energy Policy and Climate",location:"Washington, DC (also online)",duration:"Flexible (online option)",focus:"Renewable energy finance, grid integration, regulatory frameworks, energy law",why:"Good optionality toward utility and regulatory side of energy markets. Can be done online or part-time while working. Tesla energy analysts with JHU backgrounds visible on LinkedIn.",tags:["Energy Policy","Regulation","Flexible"]},
+  {tier:2,school:"SMU Cox — Maguire Energy Institute",program:"MS in Energy and Sustainability (MSES)",location:"Dallas, TX",duration:"~12 months",focus:"Energy and sustainability management with tracks in Accounting, Finance, or Operations",why:"Launched fall 2025 — brand new program from the Maguire Energy Institute, one of the oldest energy business education programs in the US (50 years). Finance track is the most relevant for markets analyst roles. Dallas is a growing energy hub and cost of living is more manageable than Houston.",tags:["Energy Finance","Sustainability","Dallas","New Program"]},
+  {tier:2,school:"★ Texas A&M University",program:"MS in Energy (Texas A&M Energy Institute)",location:"College Station, TX",duration:"As little as 10 months",focus:"Energy economics, energy systems engineering, energy law and policy, sustainability",why:"Broad interdisciplinary program leveraging the A&M Energy Institute and access to one of the world's largest alumni networks. RA FUNDING POSSIBLE: public flagship with research-active energy faculty. RA positions available especially in engineering and energy policy departments. Good cost-to-value ratio.",tags:["Energy Systems","Policy","★ RA Possible","Aggie Network","Affordable"]},
+  // Tier 3
+  {tier:3,school:"★ Georgia Tech — Carter School",program:"MS in Sustainable Energy and Environmental Management (MSEEM)",location:"Atlanta, GA",duration:"1 year (full-time) or 2 years (part-time)",focus:"Energy market regulation, carbon credits, green energy financing, data analytics, environmental law and policy",why:"Multidisciplinary program combining engineering, business, public policy, and economics. RA FUNDING CONFIRMED: full tuition waivers accompany all RA/TA positions requiring one-third to one-half time work. Minimum stipend $1,184/month for master's students (2025-26 policy). Atlanta is a growing energy and cleantech hub.",tags:["Interdisciplinary","Utility Regulation","★ RA Funding Confirmed","Georgia Tech"]},
+  {tier:3,school:"Duke University",program:"Nicholas School / Sanford School programs",location:"Durham, NC",duration:"~18–24 months",focus:"Environmental/sustainability, energy consulting, energy policy",why:"Better for sustainability-adjacent roles but places into BloombergNEF and energy consulting. Less directly targeted to markets analysis than tier 1, but Duke's brand opens doors and the energy policy network at Sanford is strong.",tags:["Sustainability","Energy Consulting","Policy"]},
+  {tier:3,school:"George Washington University",program:"MA in Environmental Resource Policy / MS Applied Economics + Energy Certificate",location:"Washington, DC",duration:"~18–24 months",focus:"Environmental economics, energy law and policy, regulatory analysis, environmental markets",why:"DC location is genuinely valuable for regulatory affairs and government-adjacent roles. FERC, DOE, and EPA are all nearby. Program is STEM-designated and includes energy law components that are useful for regulatory analyst tracks. Dual MS Applied Economics + Environmental Resource Policy certificate also available.",tags:["Policy","Regulatory","DC","Environmental Economics"]},
+  {tier:3,school:"Carnegie Mellon University",program:"MS in Public Policy & Management (Energy focus)",location:"Pittsburgh, PA",duration:"2 years",focus:"Energy systems modeling, quantitative policy analytics, cost-benefit analysis",why:"Very quantitative by public policy standards. Good for energy systems modeling alongside the market/economics lens. Heinz College attracts analytically rigorous students and the CMU brand is strong for data-driven policy work.",tags:["Systems Modeling","Quantitative Policy","CMU"]},
+];
+
+/* ─── TECH & INTERDISCIPLINARY ─── */
+const techPrograms = [
+  {badge:"MSES",school:"Northwestern University",program:"MS in Energy and Sustainability (MSES)",location:"Evanston, IL",duration:"10 months",focus:"Energy technology, markets, public policy — 3 tracks: energy & sustainable finance, energy technology, or sustainability",why:"One-year cohort program at the intersection of technology, economics, and regulation. Kellogg-affiliated with strong industry practitioner faculty. The 'energy and sustainable finance' specialization is the most relevant track. No hard GPA floor — evaluated holistically. STEM-OPT eligible for international students.",tags:["Energy Finance","Technology","Policy","Northwestern"]},
+  {badge:"EST&P",school:"Carnegie Mellon University",program:"MS Energy Science, Technology & Policy (EST&P)",location:"Pittsburgh, PA",duration:"2–3 semesters",focus:"Interdisciplinary engineering + energy markets, policy. Data science and AI/ML concentrations available (MSAIE-EST&P). Six disciplinary concentrations.",why:"Engineering-based but genuinely interdisciplinary. The new data science and AI/ML concentration (MSAIE-EST&P) pairs directly with Python/optimization backgrounds. Affiliated with the Scott Institute for Energy Innovation. Typically expects an engineering or hard-science undergrad — exceptions considered with relevant technical work experience.",tags:["Engineering","Systems","Data Science","AI/ML"]},
+  {badge:"TPP",school:"MIT",program:"MS in Technology and Policy (TPP)",location:"Cambridge, MA",duration:"2 years",focus:"Engineering + policy: energy, environment, regulatory economics, quantitative methods, thesis-based",why:"One of the most rigorous tech-policy programs in the world. Major research themes include energy systems, environmental policy, and regulatory law and economics. Requires a strong technical undergraduate background (engineering or hard science). Opens doors in government, consulting, international organizations, and energy corporations. Thesis-based means you can produce original energy market research.",tags:["Tech Policy","Engineering","Rigorous","Research"]},
+  {badge:"ERG",school:"UC Berkeley",program:"MS in Energy and Resources (ERG)",location:"Berkeley, CA",duration:"2 years",focus:"Interdisciplinary energy, environment, economics, policy — research-oriented with thesis",why:"Highly rigorous and research-oriented. Best for those who want depth at the energy-environment-economics intersection. Strong alumni network in energy consulting and policy. More academic pace than professional programs, but the interdisciplinary depth is genuine.",tags:["Research","Energy Systems","Interdisciplinary","Berkeley"]},
+  {badge:"MSEEM",school:"Georgia Tech",program:"MS in Sustainable Energy and Environmental Management (MSEEM)",location:"Atlanta, GA",duration:"1–2 years (flexible)",focus:"Courses across public policy, business, ISE, city planning, civil/environmental engineering, and economics",why:"Unusually cross-disciplinary — students build their own course mix across five schools. Faculty teach utility regulation, carbon credits, green energy financing, and data analytics alongside policy. Can be completed full or part-time, and part-time while working is a real option.",tags:["Interdisciplinary","Flexible","Utility Regulation","Engineering+Policy"]},
+  {badge:"MS",school:"University of Michigan",program:"MS in Environment and Sustainability / MS in Energy Systems Engineering",location:"Ann Arbor, MI",duration:"~18–24 months",focus:"Energy systems, grid analysis, sustainability policy, environmental economics",why:"Michigan's Energy Institute is one of the strongest in the Midwest. The Energy Systems Engineering program is heavily quantitative and technical while the School for Environment and Sustainability offers more policy flexibility. Good Michigan alumni network in both automotive energy and utilities.",tags:["Energy Systems","Grid","Midwest","Strong Alumni"]},
+  {badge:"MEng",school:"★ University of Illinois Urbana-Champaign (UIUC)",program:"Master of Engineering in Energy Systems",location:"Urbana-Champaign, IL",duration:"2–3 semesters",focus:"Professional non-thesis degree covering renewable energy, grid systems, energy policy, and storage — Grainger College of Engineering",why:"Professional, career-track degree designed for industry roles. RA FUNDING CONFIRMED: UIUC tuition waivers are contractually guaranteed to master's students holding 0.25–0.67 FTE TA/RA appointments. Minimum stipend $23,000/year (9-month, 2024-25). Research Park, EnterpriseWorks, iVenture, and Cozad New Venture Challenge on campus. Microsoft hires more UIUC graduates than any other university.",tags:["Energy Systems","Professional","★ RA Funding Confirmed","UIUC"]},
+  {badge:"MSEEM",school:"★ Georgia Tech",program:"MS Sustainable Energy & Environmental Mgmt — Tech track",location:"Atlanta, GA",duration:"1–2 years (flexible)",focus:"Courses across public policy, business, ISE, city planning, civil/environmental engineering, and economics",why:"Unusually cross-disciplinary — students build their own course mix across five schools. RA FUNDING CONFIRMED: full tuition waivers accompany all RA/TA positions at one-third to one-half time. $37,500/year stipend in College of Sciences for 2026-27. CREATE-X Startup Launch Certificate available alongside degree.",tags:["Interdisciplinary","★ RA Funding Confirmed","Flexible","Engineering+Policy"]},
+  {badge:"MS",school:"★ University of Michigan",program:"MS in Environment and Sustainability / MS in Energy Systems Engineering",location:"Ann Arbor, MI",duration:"~18–24 months",focus:"Energy systems, grid analysis, sustainability policy, environmental economics",why:"Michigan's Energy Institute is one of the strongest in the Midwest. RA FUNDING CONFIRMED: Graduate Student Assistant (GSA) tuition waivers posted based on appointment fraction. Strong Michigan alumni network in automotive energy and utilities.",tags:["Energy Systems","★ RA Funding Confirmed","Grid","Midwest"]},
+];
+
+/* ─── FINANCE & ECONOMICS ─── */
+const financePrograms = [
+  {badge:"MFin",school:"MIT Sloan",program:"Master of Finance (MFin)",location:"Cambridge, MA",duration:"12 months",focus:"Financial theory, derivatives, asset pricing, quantitative finance, risk management",why:"Best-in-class quant finance training. Not energy-specific but opens doors at commodity trading desks, energy-focused hedge funds, and structured finance. Strong brand but very competitive GMAT/GRE and academic requirements.",tags:["Quantitative Finance","Derivatives","Top-Tier"]},
+  {badge:"MFin",school:"Princeton University",program:"Master in Finance (Bendheim Center)",location:"Princeton, NJ",duration:"12 months",focus:"Financial economics, econometrics, asset pricing, risk — highly academic orientation",why:"Rigorous and academically prestigious. Excellent for commodity trading, risk analytics, and energy-focused investment roles. Very competitive admissions. Strong long-term ROI for analytically oriented applicants.",tags:["Financial Economics","Risk","Rigorous","Prestigious"]},
+  {badge:"MA",school:"University of Chicago",program:"MA in Economics / Financial Economics",location:"Chicago, IL",duration:"12–18 months",focus:"Microeconomics, econometrics, financial economics — deep quant core",why:"Deep quantitative economics training with the Chicago School reputation for rigorous analysis. Financial economics track feeds directly into commodity trading, pricing analysis, and economic consulting (Brattle, NERA, Charles River). Strong brand for analytical credibility.",tags:["Econometrics","Financial Economics","Rigorous","Chicago"]},
+  {badge:"MA",school:"Columbia University",program:"MA in Economics / MS in Financial Economics",location:"New York, NY",duration:"12–18 months",focus:"Microeconomics, econometrics, quantitative methods, financial theory",why:"Good brand for finance/markets transition, especially paired with Columbia's energy policy network at SIPA and CGEP. New York location provides access to commodity trading firms, energy investment banks, and BloombergNEF.",tags:["Economics","Quantitative","NYC Network"]},
+  {badge:"⚠️",school:"UC Berkeley — Economics",program:"No MS in Economics — PhD only",location:"Berkeley, CA",duration:"N/A",focus:"Berkeley's Economics Department explicitly states it does not offer a terminal master's degree. All admissions are for the PhD program only.",why:"Worth flagging because Berkeley's brand leads many applicants to assume an MS in Econ exists here. It does not. If you want a Berkeley economics credential the options are the PhD (not a professional degree) or the online MIDS data science program. For an energy-focused applied economics degree in California, look at UC Davis MA in Economics or the Berkeley ERG MS instead.",tags:["⚠️ No MS Econ","Berkeley","Clarification"]},
+  {badge:"MA",school:"UC Davis",program:"MA in Economics (Applied focus)",location:"Davis, CA",duration:"~18 months",focus:"Applied microeconomics, environmental and resource economics, energy policy, econometrics",why:"A genuine alternative to the nonexistent Berkeley MS in Econ. UC Davis has a respected applied economics program with faculty specializing in energy and environmental economics. Lower cost than private alternatives and accessible from the Bay Area. Good for regulatory analysis and energy policy roles.",tags:["Applied Economics","Environmental","California","Accessible"]},
+  {badge:"MS",school:"SMU Cox",program:"MS Finance — Energy Finance Specialization",location:"Dallas, TX",duration:"~12 months",focus:"Energy risk management, energy derivatives, energy project management, Bloomberg trading simulation",why:"One of the few MS Finance programs with a dedicated energy finance specialization built around the Maguire Energy Institute. Courses cover energy derivatives and risk management specifically. Dallas proximity to energy firms and lower cost of living than Houston or NYC.",tags:["Energy Finance","Derivatives","Dallas","Accessible"]},
+  {badge:"MS",school:"University of Houston — Bauer",program:"MS Finance — Energy Finance Specialization",location:"Houston, TX",duration:"18–22 months",focus:"Energy economics, energy trading, energy derivatives, risk management — taught by industry executives",why:"One of the strongest energy finance programs outside of a dedicated energy school. GEMI-backed curriculum with senior energy industry executives as instructors. Houston location means recruiting connections are local. STEM-designated.",tags:["Energy Finance","Houston","Trading","Risk Management"]},
+  {badge:"MA",school:"Tufts University",program:"MA in Economics (strong energy/environmental economics faculty)",location:"Medford, MA",duration:"~18 months",focus:"Applied econometrics, environmental and energy economics, policy analysis",why:"Tufts has a respected economics faculty with strong environmental and energy economics focus. DC and Boston connections are useful for regulatory and consulting roles. More accessible than Chicago or Columbia while still analytically rigorous.",tags:["Applied Economics","Environmental","Boston","Accessible"]},
+  {badge:"MS",school:"Vanderbilt University",program:"MS in Finance (Owen Graduate School)",location:"Nashville, TN",duration:"12 months",focus:"Corporate finance, financial modeling, investments, energy finance electives",why:"Solid MS Finance program with good placement in finance roles. Accessible for applicants with lower GPAs who have strong work experience. Owen has regional energy ties and a reasonable cost structure compared to coastal programs.",tags:["Finance","Modeling","Accessible","South"]},
+  {badge:"MSF",school:"UT Austin — McCombs",program:"MS in Finance (MSF)",location:"Austin, TX",duration:"10 months (July start)",focus:"Core finance theory, financial modeling, derivatives, investments, data analytics — spring electives allow specialization including energy finance. Practicum with sponsoring companies in second half of program.",why:"A strong, STEM-designated MS Finance from a top-15 public business school in the heart of Austin's energy market. The practicum places students directly with companies on live finance problems — students can indicate energy as an area of interest. GRE/GMAT optional, and test waivers available for applicants with strong quant backgrounds. The Kay Bailey Hutchison Energy Center and McCombs energy finance electives make this more energy-relevant than a typical MS Finance. F1-friendly — qualifies for 3 years of OPT via STEM extension. Tuition is $54K in-state, $58K out-of-state.",tags:["MSF","STEM OPT","Energy Finance","Austin","Practicum","GRE Optional"]},
+  {badge:"MFE",school:"UC Berkeley — Haas",program:"Master of Financial Engineering (MFE)",location:"Berkeley, CA",duration:"1 year full-time (Spring start) or 2 years part-time",focus:"Financial theory + Python/C++ programming + machine learning + data science applied to finance — derivatives pricing, portfolio optimization, risk management, algorithmic trading, stochastic calculus",why:"Ranked #1 financial engineering program in the US multiple years running. One of the most technically demanding finance master's programs available — the coding requirement is genuine, not superficial. Students learn to combine finance, mathematics, data science, machine learning, and computer programming to solve hard quantitative problems. For energy markets, the skills transfer directly to BESS valuation, stochastic dispatch modeling, and commodity derivatives. Starts in spring (not fall) — plan application timeline accordingly. STEM-designated, so F1 students get 3-year OPT extension. GRE or GMAT required. Holistic admissions — lower GPAs considered with strong professional experience and quant coursework. Tuition is ~$77K total for the full-time program.",tags:["MFE","#1 Ranked","Quant","Python+C++","STEM OPT","Spring Start","Competitive"]},
+];
+
+/* ─── MBA ─── */
+const mbaPrograms = [
+  {badge:"MBA",school:"Rice University — Jones",program:"MBA — Energy Specialization",location:"Houston, TX",duration:"2 years",focus:"Energy strategy, energy finance, energy management — ~18–20% of class enters energy sector annually",why:"Top MBA specifically for energy. Houston puts you at the center of both traditional and transition energy recruiting. Strong ties to Wood Mac, ExxonMobil, Chevron, and energy consulting. Active Energy Association with constant industry programming.",tags:["MBA","Energy","Houston","Strategy"]},
+  {badge:"MBA",school:"UT Austin — McCombs",program:"MBA — Energy Finance or CleanTech Concentration",location:"Austin, TX",duration:"2 years",focus:"Energy Finance (derivatives, risk, project finance) or CleanTech (renewable energy management, emissions) concentrations. Kay Bailey Hutchison Energy Center.",why:"Two distinct energy MBA concentrations. Energy Finance is the more markets-relevant track — covers commodity derivatives and project valuation. KBH Energy Center bridges business and law. Strong Austin/Texas energy recruiting and consulting placement.",tags:["MBA","Energy Finance","CleanTech","Texas"]},
+  {badge:"MBA",school:"Northwestern — Kellogg",program:"MBA — Sustainability, Climate, Energy & Environment Pathway",location:"Evanston, IL",duration:"2 years",focus:"Economics and strategy of energy markets, corporate sustainability, sustainable investing",why:"Strong top-10 MBA with energy pathway. Paired with the MSES program, Kellogg has one of the richest energy ecosystems at a top MBA. Good for roles blending strategy and markets at Tesla Energy or energy strategy consulting.",tags:["MBA","Energy Strategy","Sustainability","Top-10"]},
+  {badge:"MBA",school:"Duke University — Fuqua",program:"MBA — Energy & Environment (EDGE Center)",location:"Durham, NC",duration:"2 years",focus:"Renewable energy, energy markets and policy, environmental sustainability, sustainable finance",why:"Fuqua's Center for Energy, Development and the Global Environment (EDGE) includes courses in Energy Markets and Policy plus Renewable Energy and Sustainable Technologies. Places well into energy consulting and transition finance.",tags:["MBA","Energy Markets","Policy","Fuqua"]},
+  {badge:"MBA",school:"Texas A&M — Mays",program:"MBA — Energy Certificate / Energy Sector Recruiting",location:"College Station, TX",duration:"2 years",focus:"Energy sector leadership, certificate in energy via Texas A&M Energy Institute, Aggie Network",why:"Not a formal concentration but Mays MBA students have the Texas A&M Energy Institute on campus and one of the world's most active alumni networks in the energy sector. ~13% of MBA graduates enter energy roles. Strong placement at Phillips 66, ConocoPhillips, and similar firms. Lower cost than private school peers.",tags:["MBA","Energy","Aggie Network","Affordable"]},
+  {badge:"MBA",school:"SMU Cox — Maguire Energy Institute",program:"MBA — Energy Finance Concentration",location:"Dallas, TX",duration:"2 years",focus:"Energy risk management, energy project management, trading, ESG and sustainability — backed by 50-year-old Maguire Energy Institute",why:"Strong regional energy MBA with Maguire Energy Institute support. Dallas location is growing in energy relevance. Energy finance concentration and certificate programs available within the MBA. Good value compared to Houston peers.",tags:["MBA","Energy Finance","Dallas","Maguire Institute"]},
+  {badge:"MBA",school:"Harvard Business School",program:"MBA — Energy & Environment Track",location:"Boston, MA",duration:"2 years",focus:"Strategy, finance, policy — energy/environment is a field track, not a formal concentration",why:"No formal energy specialization but strong energy-adjacent coursework and alumni in senior energy roles. The brand opens every door. Best if you want investment, development finance, or senior strategy — less ideal for pure markets analytics entry-level work.",tags:["MBA","Brand","Strategy","Selective"]},
+  {badge:"MBA",school:"UC Berkeley — Haas",program:"MBA — Energy Institute / Sustainable Business",location:"Berkeley, CA",duration:"2 years",focus:"Clean energy, sustainable finance, energy markets, technology commercialization — Energy Institute at Haas",why:"Strong clean energy and sustainability focus. Energy Institute at Haas runs active research and networking with NextEra, PG&E, and cleantech investors. Bay Area is best-in-class for cleantech VC and energy storage startup recruiting.",tags:["MBA","Clean Energy","Sustainable Finance","Bay Area"]},
+  {badge:"MBA",school:"UNC Kenan-Flagler",program:"MBA — Energy Concentration",location:"Chapel Hill, NC",duration:"2 years",focus:"Full energy spectrum: renewables, oil, power markets — Energy Center research. Energy Club.",why:"One of the few MBA programs with an explicit energy concentration that covers both traditional and clean energy. Kenan-Flagler's Energy Center produces applied research and connects students to industry. Good cost-to-value ratio at a public university.",tags:["MBA","Energy","Renewables+Oil","UNC"]},
+  {badge:"MBA",school:"Emory University — Goizueta",program:"MBA — Energy & CleanTech Association / Electives",location:"Atlanta, GA",duration:"1 or 2 years",focus:"No formal energy concentration, but active Energy & CleanTech Association, relevant electives, and access to Georgia's growing cleantech ecosystem",why:"Goizueta doesn't have a dedicated energy master's program — there is no standalone energy or energy economics MS here. However, the MBA (ranked ~#16 Bloomberg Businessweek) has a strong Energy & CleanTech student club, relevant electives, and Atlanta's proximity to Georgia Power, Southern Company, and a growing cleantech scene. The 1-year MBA option is a differentiator. Consider this an adjacent option rather than a primary energy path.",tags:["MBA","Atlanta","Energy Club","CleanTech Adjacent"]},
+];
+
+/* ─── DUAL DEGREES ─── */
+const dualPrograms = [
+  {badge:"JD/MBA",school:"Harvard (HLS + HBS)",program:"JD/MBA — 4 years",location:"Boston, MA",duration:"4 years",focus:"Law, business strategy, policy — regulatory affairs, M&A, senior leadership",why:"Most prestigious JD/MBA. Only ~10 students per year in the joint track. Best for roles at the intersection of energy regulation, M&A, and senior government leadership. Most relevant to FERC regulatory practice and utility M&A rather than entry-level analyst work.",tags:["JD/MBA","Regulatory","Prestige","Selective"]},
+  {badge:"JD/MBA",school:"Columbia (Law + CBS)",program:"Three-Year JD/MBA",location:"New York, NY",duration:"3 years (accelerated)",focus:"Business law, finance, policy — NYC energy market and legal ecosystem access",why:"Unique accelerated 3-year program. NYC location is strong for energy trading legal work, structured finance, and policy roles. Combined with Columbia's energy network at SIPA/CGEP, this is a well-rounded dual degree for energy markets + regulatory track.",tags:["JD/MBA","NYC","Energy Law","3-Year"]},
+  {badge:"MBA/MPP",school:"Harvard (HBS + HKS)",program:"MBA/MPP — 3 years",location:"Boston, MA",duration:"3 years",focus:"Public policy + business management — policy design, regulatory reform, government leadership",why:"Designed for roles bridging government and private sector. Strong for senior energy policy analyst, regulatory strategy, or government affairs positions at utilities, Tesla Energy, DOE, or FERC. One of the most recognized dual degrees in policy circles.",tags:["MBA/MPP","Policy","Government","Energy Regulation"]},
+  {badge:"MBA/MEM",school:"Yale (SOM + School of the Environment)",program:"MBA/MEM or MBA/MF — 3 years",location:"New Haven, CT",duration:"~3 years",focus:"Business + Master of Environmental Management or Master of Forestry — energy, climate, sustainability",why:"Yale's joint MBA/MEM is one of the most natural pairings for energy transition roles. The School of the Environment has strong energy and climate research. Good for senior roles in clean energy investment, utility strategy, or carbon markets.",tags:["MBA/MEM","Yale","Environment","Climate Finance"]},
+  {badge:"MBA/MPP",school:"Duke (Fuqua + Sanford)",program:"MBA/MPP — 3–3.5 years",location:"Durham, NC",duration:"3–3.5 years",focus:"Energy policy, sustainable development, markets — Sanford School of Public Policy",why:"More accessible than Harvard versions with genuinely strong energy focus. Fuqua's EDGE Center plus Sanford's policy depth is a natural combination for energy regulatory affairs, policy-adjacent analyst roles, or energy project development.",tags:["MBA/MPP","Energy Policy","Duke","Accessible"]},
+  {badge:"JD/MBA",school:"Northwestern (Pritzker + Kellogg)",program:"Accelerated JD/MBA — 3 years",location:"Evanston, IL",duration:"3 years",focus:"Law, corporate strategy, energy market regulation",why:"3-year accelerated program. Kellogg's energy pathway combined with Pritzker Law's regulatory strengths is solid for energy regulatory practice and commercial energy transaction work. Chicago-area location gives Great Lakes energy market access.",tags:["JD/MBA","Regulatory","Kellogg","Accelerated"]},
+  {badge:"MBA/MPP",school:"Michigan (Ross + Ford School)",program:"MBA/MPP — 3 years",location:"Ann Arbor, MI",duration:"3 years",focus:"Business + public policy — regulatory economics, policy design, public-private partnerships",why:"Michigan Ross is a strong MBA with good consulting placement. The Gerald R. Ford School of Public Policy has serious energy economics faculty. The Midwest energy market (MISO, utilities) is well-represented in Michigan recruiting.",tags:["MBA/MPP","Michigan","Policy","Consulting"]},
+  {badge:"MBA/MPP",school:"Stanford (GSB + Humanities)",program:"MBA/MPP — ~2.5 years",location:"Palo Alto, CA",duration:"~2.5 years",focus:"Policy, business, sustainability — Bay Area cleantech ecosystem and tech-energy intersection",why:"Stanford's MBA/MPP opens strong doors in cleantech investment, energy storage companies, and policy roles. Bay Area ecosystem is best-in-class for clean energy transition companies and climate tech. High selectivity — both programs are extremely competitive.",tags:["MBA/MPP","Stanford","Cleantech","Selective"]},
+  {badge:"JD/MSF",school:"Vanderbilt (Law + Owen)",program:"JD/MS Finance — 3 years, no extra time",location:"Nashville, TN",duration:"3 years",focus:"Corporate and business law + financial modeling, derivatives, energy finance — rare combination in the legal market",why:"One of the most compelling New Ivy dual degrees for energy. JD students complete two years at the law school, one intensive semester at Owen, then a final semester mixing law and finance courses — earning both degrees without adding a year. Vanderbilt Law has climate change and environmental law electives. The MSF gives you financial modeling depth alongside the legal credential. Rare enough that it stands out in energy M&A and regulatory recruiting. Forbes New Ivy school with strong national placement.",tags:["JD/MSF","Vanderbilt","New Ivy","3 Years","Energy M&A"]},
+  {badge:"JD/MBA",school:"Vanderbilt (Law + Owen)",program:"JD/MBA — 4 years",location:"Nashville, TN",duration:"4 years",focus:"Law + MBA — corporate law, energy strategy, business development",why:"Standard dual degree option at Vanderbilt. Four years total. Less targeted than the JD/MSF for energy finance roles but broader strategic optionality. Owen MBA has energy finance electives. Good for roles blending legal and commercial strategy at utilities or energy companies.",tags:["JD/MBA","Vanderbilt","New Ivy","Corporate Law"]},
+  {badge:"JD/MPP",school:"Georgetown (Law + McCourt)",program:"JD/MPP — 4 years, accelerated",location:"Washington, DC",duration:"4 years (accelerated — no extra year)",focus:"Law + public policy — regulatory economics, energy policy, FERC and federal agency careers",why:"Georgetown Law sponsors all joint programs on an accelerated basis — both degrees in four years rather than five. McCourt School of Public Policy has a strong energy and environment policy track. DC location puts you next to FERC, DOE, EPA, and every energy regulatory body in the US. Strong for regulatory affairs, government energy roles, and energy policy consulting. Georgetown is the Forbes New Ivy most aligned with Washington DC power structures.",tags:["JD/MPP","Georgetown","New Ivy","DC","FERC","Regulatory"]},
+  {badge:"JD/MBA",school:"Georgetown (Law + McDonough)",program:"JD/MBA — STEM eligible Management Science track",location:"Washington, DC",duration:"4 years",focus:"Law + MBA — business law, corporate strategy, STEM-designated Management Science major available",why:"Georgetown's JD/MBA includes an optional STEM Management Science major within the MBA — making it OPT-eligible for 3 years as an F1 student. Useful if you want a business law plus analytical management combination. DC location is strong for energy regulatory and commercial roles.",tags:["JD/MBA","Georgetown","STEM OPT","F1 Friendly","DC"]},
+  {badge:"JD/MJ",school:"Tulane (Law)",program:"JD + Master of Jurisprudence in Energy & Environment Law",location:"New Orleans, LA",duration:"Combined, partially online",focus:"Energy law, environmental law, regulatory frameworks — designed for both regulated entities and regulators in the energy sector",why:"One of the few programs in the US explicitly designed for the energy regulatory ecosystem. Tulane Law is historically one of the strongest energy and environmental law schools in the country given New Orleans' proximity to Gulf Coast oil and gas. The Master of Jurisprudence in Energy and Environment Law covers legal content essential to understanding both sides of energy regulation — the regulated companies and the regulators. More accessible admissions than Vanderbilt or Georgetown. Good for energy regulatory affairs, compliance, and policy roles.",tags:["JD","Energy Law","Tulane","New Ivy","Gulf Coast","Regulatory"]},
+  {badge:"JD/LLM",school:"University of Houston Law Center",program:"JD/LLM in Energy, Environment & Natural Resources Law — 3.5 years",location:"Houston, TX",duration:"3.5 years",focus:"Energy law, environmental law, natural resources — most energy-specific law dual degree in the US",why:"UH Law is arguably the most directly energy-focused law school in the US given its Houston location and deep industry ties. The JD/LLM in Energy, Environment and Natural Resources Law is completable in 3.5 years. Separately, UH Law runs the International Energy Lawyers Program (IELP) with University of Calgary — earning both US and Canadian law degrees in 4 years with a focus on natural resource and energy law. If pure energy law is the goal, this is more targeted than any Ivy or New Ivy option. Not a prestige brand but the industry network in Houston is unmatched.",tags:["JD/LLM","Energy Law","Houston","Most Energy-Specific","IELP"]},
+];
+
+/* ─── COMPANIES ─── */
+// Each sector has a label, accent color, and array of companies
+const companySectors = [
+  {
+    id:"vertical",
+    label:"① Vertical Integration — EV + Grid & Residential Storage",
+    desc:"Companies that own hardware, software, and deployment across the storage stack. Analyst roles focus on market strategy, grid economics, and product positioning.",
+    accent:"#3b82f6",
+    companies:[
+      {company:"Tesla Energy",type:"Anchor — EV + Storage",roles:["Energy Markets Analyst","Grid Strategy Analyst","Energy Policy Analyst","Market Development Analyst","Regulatory Affairs Analyst"],education:"Columbia SIPA and JHU energy policy grads visible. Policy + market understanding is the expected profile.",skills:"FERC/NERC regulatory knowledge, utility engagement, strategic market analysis, PPA and tariff modeling",note:"Corporate rather than pure research. Roles interface with utilities and regulators. The Autobidder and Megapack products create demand for analysts who understand dispatch economics and ancillary services markets."},
+      {company:"BYD",type:"EV + LFP Cell Manufacturer",roles:["Market Analyst","Energy Storage Analyst","Business Development Analyst","Supply Chain Analyst"],education:"Engineering or economics backgrounds. Chinese market knowledge is a plus for some roles.",skills:"Battery economics, storage system modeling, supply chain analysis, competitive market research",note:"Vertically integrated from cells to grid storage. US and EU market expansion is creating new analytical roles focused on market entry and pricing strategy."},
+      {company:"Rivian",type:"EV + V2G",roles:["Energy Markets Analyst","Grid Integration Analyst","Fleet Electrification Analyst","Business Development Analyst"],education:"Energy economics or engineering + policy backgrounds. V2G/VPP knowledge valued.",skills:"Vehicle-to-grid modeling, fleet energy management, utility partnership strategy, EV market analysis",note:"V2G ambitions mean Rivian needs analysts who understand grid economics and electricity markets, not just automotive. Growing role for energy market specialists."},
+      {company:"Enphase",type:"Residential Microinverters + IQ Battery",roles:["Energy Analyst","Market Intelligence Analyst","Regulatory Affairs Analyst","Product Strategy Analyst"],education:"Economics, engineering, or policy. Understanding of NEM tariffs and net metering policy is valued.",skills:"Residential energy economics, rate design analysis, DER policy, battery storage ROI modeling",note:"Strong in residential solar + storage. Analysts work on tariff policy impacts, market sizing, and product economics across US state markets."},
+      {company:"SolarEdge / SunPower",type:"Solar + Residential Storage",roles:["Energy Market Analyst","Policy Analyst","Financial Analyst — Energy","Strategic Planning Analyst"],education:"Economics, finance, or engineering with energy policy exposure.",skills:"Residential solar market analysis, financial modeling, IRA/tax credit analysis, rate policy",note:"Market analysts track state-level net metering changes, incentive programs, and competitive positioning. SunPower has gone through restructuring — understand the landscape before applying."},
+    ]
+  },
+  {
+    id:"assetops",
+    label:"② Asset Operations — DER, BESS Dispatch & VPP",
+    desc:"Companies that optimize, aggregate, and trade distributed energy assets. These are some of the best entry points for quantitatively-oriented analysts who want to work with real dispatch data and optimization models.",
+    accent:"#10b981",
+    companies:[
+      {company:"AutoGrid",type:"DER Optimization — Utility-Facing",roles:["Data Scientist — Optimization","Energy Market Analyst","Grid Analytics Analyst","Solutions Architect","Market Operations Analyst"],education:"Operations research, engineering, applied math, or energy economics. Python and optimization solver experience explicitly required.",skills:"Linear/integer/stochastic programming, real-time dispatch optimization, DER aggregation, demand response analytics",note:"Founded at Stanford. Backed by NextEra, E.ON, National Grid. Data science and optimization roles dominate hiring. Control room operator roles also exist for market-facing operations."},
+      {company:"Enel X",type:"Demand Response at Scale",roles:["Energy Market Analyst","Demand Response Program Analyst","Market Development Analyst","Regulatory Affairs Analyst"],education:"Energy economics, applied econ, or engineering. Understanding of capacity markets and ancillary services valued.",skills:"Demand response design, capacity market bidding, energy procurement, regulatory analysis",note:"Part of Enel Group. Large-scale demand response programs across PJM, NYISO, and ISO-NE. Analyst roles work closely with utility and wholesale market structures."},
+      {company:"GridBeyond",type:"AI Energy Management — ABB Partner",roles:["Energy Analyst","Market Analyst","Data Analyst","Commercial Analyst"],education:"Energy economics, data science, or engineering. Markets knowledge across multiple ISOs/RTOs is a plus.",skills:"Behind-the-meter optimization, electricity market bidding, energy data analysis, forecasting",note:"AI-driven energy management with ABB backing. Analysts work on portfolio optimization and market participation strategy for industrial and commercial clients."},
+      {company:"Stem Inc.",type:"AI-Driven BESS Portfolio — Athena AI",roles:["Energy Market Analyst","Portfolio Analyst","Revenue Analyst","Market Operations Analyst","Data Scientist — Storage"],education:"Energy economics, finance, or engineering. Python and storage dispatch knowledge valued. Aurora/Modo-style modeling backgrounds transferable.",skills:"BESS dispatch optimization, revenue stacking, ancillary services bidding, solar + storage portfolio analytics",note:"Listed company (NYSE: STEM). Athena AI platform manages 200k+ solar sites. Analyst roles focus on revenue optimization across multiple markets including ERCOT, PJM, CAISO. Strong entry point for storage analytics."},
+      {company:"On.Energy",type:"AI-Powered Grid-Scale Dispatch",roles:["Energy Market Analyst","Dispatch Analyst","Commercial Analyst","Product Analyst"],education:"Energy economics or engineering with market operations knowledge.",skills:"Real-time dispatch, market bidding strategy, energy storage revenue modeling, LMP forecasting",note:"Grid-scale BESS dispatch focus. Analyst roles support automated bidding across energy and ancillary service markets."},
+      {company:"Power Factors",type:"Renewable Asset Management Platform",roles:["Data Analyst","Energy Analyst","Asset Performance Analyst","Market Intelligence Analyst"],education:"Engineering, data science, or applied math with energy industry exposure.",skills:"Asset performance monitoring, production forecasting, data visualization, renewable energy operations analytics",note:"SaaS platform for renewable asset management. Roles are more operational and data-oriented than pure market analytics, but energy market context is highly relevant."},
+      {company:"Sunrun",type:"Residential Solar + VPP Aggregator",roles:["Energy Market Analyst","VPP Analyst","Regulatory Policy Analyst","Grid Services Analyst"],education:"Energy policy, economics, or engineering. DER aggregation and VPP knowledge valued.",skills:"Virtual power plant design, DER aggregation, NEM policy, grid services markets, VPP revenue modeling",note:"Largest US residential solar + storage company. VPP programs are growing and require analysts who understand both retail and wholesale electricity market structures."},
+      {company:"Swell Energy (NRG)",type:"Home Storage VPP Programs",roles:["Energy Analyst","VPP Program Analyst","Market Strategy Analyst"],education:"Energy economics or policy. Understanding of FERC Order 2222 and DER market access is valued.",skills:"Residential DER aggregation, VPP revenue modeling, demand response, utility partnership strategy",note:"Now part of NRG. Focuses on residential BESS aggregation for grid services. Analyst roles support VPP program design and market participation."},
+      {company:"Nuvve",type:"V2G Fleet Aggregation",roles:["Energy Market Analyst","Fleet Electrification Analyst","Grid Services Analyst","Market Development Analyst"],education:"Energy economics or engineering. EV + grid integration knowledge is a strong differentiator.",skills:"V2G dispatch modeling, fleet charging optimization, ancillary services markets, EV demand forecasting",note:"Pioneer in vehicle-to-grid technology. Analysts work on fleet charging economics, grid services participation, and market development for V2G programs."},
+      {company:"Zenobe Energy",type:"BESS Finance, Build & Operate",roles:["Energy Market Analyst","Project Finance Analyst","Asset Analyst","Market Risk Analyst"],education:"Energy economics, finance, or engineering. Project finance and merchant revenue modeling skills valued.",skills:"BESS project finance, revenue merchant modeling, grid services markets (UK/US), asset management",note:"UK-based but expanding in US. Strong in BESS project finance and grid-scale storage operations. Analyst roles at the intersection of project finance and energy market analytics."},
+      {company:"Fluence (Siemens + AES)",type:"Utility BESS Integrator",roles:["Market Analyst","Energy Storage Analyst","Commercial Analyst","Grid Integration Analyst"],education:"Engineering or energy economics. Technical background in BESS systems plus market economics is the ideal profile.",skills:"BESS system design economics, market analysis, utility procurement support, storage bidding strategy",note:"JV between Siemens and AES. Dominant in utility-scale BESS integration. Market analyst roles support competitive bids and project economics."},
+    ]
+  },
+  {
+    id:"analytics",
+    label:"③ Bankable Analytics — Market Intelligence & Forecasting",
+    desc:"Companies producing investment-grade forecasts, market data, and analytics tools for project finance, trading, and strategy. These are the most direct hiring targets for energy markets analyst roles.",
+    accent:"#f59e0b",
+    companies:[
+      {company:"Aurora Energy Research",type:"Market Intelligence & Power Market Modelling",roles:["Graduate Analyst","Graduate Modeller","Research Analyst","Advisory Analyst","Associate Director"],education:"Relevant Master's or PhD strongly preferred for modelling track. Python proficiency explicitly required for the Oxford Modelling Programme.",skills:"Power market modelling, Python, scenario forecasting, battery storage analysis, renewable asset valuation",note:"Has dedicated graduate programmes in Oxford, Austin, Berlin, and Sydney. Chronos tool used for BESS valuations in project finance. One of the best entry points if you're quant-oriented."},
+      {company:"Wood Mackenzie",type:"Research & Energy Consulting",roles:["Research Analyst","Principal Analyst","Energy Transition Analyst","Power Markets Analyst","Senior Consultant"],education:"MSc in Energy Economics, International Political Economy (LSE), or related applied econ/policy. Mines and LSE grads visible at senior levels.",skills:"Market modeling, supply/demand forecasting, report writing, client advisory, scenario analysis",note:"Structured analyst-to-senior path. Internships often convert to full-time. Strong brand for future career optionality across sectors."},
+      {company:"Ascend Analytics",type:"Project Finance Analytics — BESS Valuation",roles:["Energy Analyst","Market Analyst","Quantitative Analyst","Storage Analyst","Power Market Modeler"],education:"Energy economics, applied math, or engineering. Python and optimization backgrounds valued. PowerVAL platform knowledge is a differentiator.",skills:"Stochastic dispatch modeling, BESS revenue forecasting, merchant risk analysis, P50/P90 revenue assessment",note:"$50B+ in project finance assessed. PowerVAL is the industry-standard BESS valuation tool. Roles here sit directly at the intersection of quantitative modeling and project finance."},
+      {company:"BloombergNEF",type:"Research & Commodity Data",roles:["Associate Analyst","Energy Storage Analyst","Power Markets Analyst","Energy Transition Analyst","Senior Analyst"],education:"Wide range — economics, policy, engineering. Columbia, Duke, and top economics programs common.",skills:"Data-driven research, sector forecasting, institutional client reporting, market sizing, commodity analysis",note:"Tier 1 ratings on commodity and technology sectors. Covers everything from solar to hydrogen to grid storage. Strong stepping stone to buy-side or consulting."},
+      {company:"Rystad Energy",type:"Energy Research & Business Intelligence",roles:["Analyst","Research Analyst","Data Analyst","Senior Analyst — Power & Renewables","Consultant"],education:"Economics, engineering, or geosciences backgrounds. Analytical skills and energy market knowledge most valued. Graduate degrees common.",skills:"Energy data analysis, market forecasting, Power BI/Tableau, industry database work, client presentations",note:"Independent energy research firm expanding rapidly into renewables and power markets. New York, Houston, and DC offices for US market coverage."},
+      {company:"Modo Energy",type:"Battery Storage Analytics",roles:["Energy Analyst","Market Research Analyst","Data Analyst","Storage Strategy Analyst"],education:"Varied — market knowledge and analytical ability matter more than specific program. King's College London and University of Sydney visible among staff.",skills:"BESS revenue analysis, market dispatch modelling, Python/data tools, battery storage strategy",note:"Small, fast-moving team focused on BESS and grid flexibility. Publishes widely-read BESS market analysis for UK and US markets. Good for niche expertise in storage."},
+      {company:"KYOS",type:"Storage Valuation & Derivatives",roles:["Quantitative Analyst","Energy Trading Analyst","Storage Valuation Analyst","Market Risk Analyst"],education:"Quantitative finance, operations research, or energy economics. Derivatives pricing knowledge valued.",skills:"BESS valuation, energy derivatives, stochastic modeling, commodity risk analytics, trading strategy",note:"Specialist in energy storage valuation and commodity derivatives. Smaller firm with deep quant focus — roles are highly technical."},
+      {company:"LCP Delta",type:"European BESS Market Indexes",roles:["Energy Research Analyst","Market Analyst","Graduate Analyst — Energy","Storage Analyst"],education:"Economics, engineering, or energy policy. European market knowledge is a differentiator.",skills:"BESS market indexing, European power market analysis, storage revenue tracking, policy analysis",note:"Part of LCP actuarial group. Produces leading BESS market index for Europe. Graduate analyst program is a genuine entry point for early-career analysts."},
+      {company:"Energy Aspects",type:"Gas-Power Dynamics & Commodity",roles:["Analyst — Power & Gas","Commodity Analyst","Research Associate","Senior Analyst"],education:"Energy economics or engineering. LNG, gas, and power market understanding valued.",skills:"Gas-power market analysis, LNG fundamentals, commodity price forecasting, interconnected market modeling",note:"Subscription research firm covering gas, power, and oil market interconnections. Strong in European and global LNG markets. Good for analysts who want gas-power convergence roles."},
+      {company:"Enverus",type:"Energy Data & Power Market Analytics",roles:["Market Analyst","Power & Gas Analyst","Data Analyst","Commodity Analyst"],education:"Energy economics or applied econ. Skills-first evaluation over program brand.",skills:"ERCOT/PJM power market fundamentals, commodity pricing, data analysis, market intelligence reporting",note:"Active in US power, gas, and upstream markets. ERCOT and PJM coverage is particularly strong. Good entry-level option with broad energy data exposure."},
+      {company:"REsurety / Speedwell",type:"Renewable Revenue Risk — P50/P90",roles:["Energy Analyst","Risk Analyst","Quantitative Analyst","Project Finance Analyst"],education:"Statistics, applied math, energy economics, or finance. Probabilistic modeling and renewable energy knowledge valued.",skills:"P50/P90 revenue risk analysis, wind/solar production modeling, merchant risk, project finance support",note:"Specializes in renewable energy revenue risk assessment. Roles sit at the intersection of weather/production modeling and financial risk. Strong in wind and solar energy yield analysis."},
+      {company:"S&P Global Commodity Insights",type:"Platts Benchmarks — Gas & Power",roles:["Market Analyst","Price Reporter","Research Analyst","Commodity Analyst"],education:"Energy economics, journalism, or finance. Commodity markets knowledge valued across all levels.",skills:"Price benchmark methodology, natural gas and power market reporting, commodity data analysis, client advisory",note:"Formerly Platts. Produces benchmark pricing for gas, LNG, power, and metals. Price reporter roles are unique — half journalism, half market analysis. Strong brand for career mobility."},
+      {company:"Benchmark Mineral Intelligence",type:"Lithium & Battery Materials Pricing",roles:["Analyst — Lithium & Battery Materials","Market Research Analyst","Price Reporter","Consulting Analyst"],education:"Geology, economics, chemistry, or mining engineering. Battery materials supply chain knowledge is a differentiator.",skills:"Lithium pricing, battery supply chain analysis, critical minerals market research, price benchmarking",note:"Specialist in battery raw materials and critical minerals. As BESS demand grows, lithium and materials analysts are increasingly relevant to the energy storage analyst career path."},
+    ]
+  },
+  {
+    id:"utilities",
+    label:"④ Utilities & Large-Cap IPPs — Grid-Scale Owners & Operators",
+    desc:"Large utilities and independent power producers. Analyst roles focus on long-run planning, dispatch, asset analytics, and regulatory affairs. These tend to be more stable, higher-compensation roles requiring energy economics or engineering backgrounds.",
+    accent:"#8b5cf6",
+    companies:[
+      {company:"NextEra Energy",type:"Anchor — Wind, Solar, Nuclear, Storage",roles:["Market Analyst","Energy Market Analyst","Power Analyst","Quantitative Analyst — NextEra Analytics","Regulatory Affairs Analyst","Asset Management Analyst"],education:"Applied math, physics, engineering, statistics, or data science at graduate level. NextEra Analytics team specifically hires quantitative graduates.",skills:"Power market modeling, optimization, grid planning, regulatory analysis, financial modeling, forecasting",note:"World's largest wind and solar generator. NextEra Analytics is a separate division focused on the hardest quantitative problems in energy. About 60% of the analytics team is in St. Paul, MN. Strong entry point for analytically rigorous graduates."},
+      {company:"Constellation Energy",type:"Nuclear + Clean Energy",roles:["Energy Market Analyst","Power Trader","Portfolio Analyst","Regulatory Affairs Analyst","Asset Optimization Analyst"],education:"Energy economics, finance, or engineering. Nuclear market knowledge is a differentiator.",skills:"Nuclear energy economics, PJM/NYISO market operations, clean energy credit (ZEC) markets, asset optimization",note:"Nation's largest clean energy producer by carbon-free output. Heavy FERC and PJM regulatory engagement. Analyst roles in power trading and asset optimization."},
+      {company:"Brookfield Renewable",type:"Hydro, Wind, Solar, Storage — 10.5 GW",roles:["Asset Analyst","Market Analyst","Project Finance Analyst","Investment Analyst","Portfolio Strategy Analyst"],education:"Finance, energy economics, or engineering. Project finance modeling and renewable energy market knowledge valued.",skills:"Renewable asset valuation, project finance, long-run power market forecasting, portfolio optimization, M&A analytics",note:"Major global renewable asset owner — 10.5 GW Microsoft deal is illustrative of scale. Analyst roles have both market analytics and investment analysis dimensions."},
+    ]
+  },
+  {
+    id:"developers",
+    label:"⑤ Developers & IPPs — Project Development & Revenue Modeling",
+    desc:"Companies that build, own, and operate large-scale renewable energy projects. Analyst roles center on PPA structuring, project economics, revenue forecasting, and market analysis.",
+    accent:"#22c55e",
+    companies:[
+      {company:"Invenergy",type:"Wind, Solar, Storage Developer — 29 GW",roles:["Market Analyst","Energy Market Analyst","Project Finance Analyst","Resource Analyst","Regulatory Affairs Analyst"],education:"Energy economics, finance, or engineering. Wholesale market knowledge (PJM, MISO, ERCOT) valued.",skills:"Wholesale power market analysis, PPA structuring, project revenue modeling, interconnection study review",note:"One of the largest private renewable developers in the US — 29 GW across wind, solar, and storage. Analyst roles support both development-stage and operating-asset decisions."},
+      {company:"Apex Clean Energy",type:"Renewable Developer — 60 GW Pipeline",roles:["Market Analyst","Energy Markets Analyst","Revenue Analyst","Development Analyst","Regulatory Policy Analyst"],education:"Energy economics or engineering. Power market fundamentals and forecasting skills are core requirements.",skills:"Long-term power market forecasting, PPA pricing, merchant revenue analysis, ISO/RTO market rules",note:"Large US renewable developer with 60 GW pipeline. Analyst roles are specifically focused on market economics and revenue modeling for wind, solar, and storage projects."},
+      {company:"Cypress Creek Renewables",type:"Solar + Storage Developer — 850+ Projects",roles:["Energy Market Analyst","Development Analyst","Asset Management Analyst","Interconnection Analyst"],education:"Energy economics or engineering. Site-level and portfolio-level market knowledge valued.",skills:"Solar + storage project economics, interconnection queue analysis, merchant revenue modeling, PPA and offtake structuring",note:"850+ projects across 12 GW solar and storage pipeline. Analyst roles focus on site-level and portfolio market economics. Good entry point for development-side analytical roles."},
+      {company:"First Solar",type:"Thin-Film PV + Supply Chain Analytics",roles:["Market Analyst","Supply Chain Analyst","Financial Analyst — Energy","Regulatory Analyst"],education:"Engineering, economics, or supply chain. Manufacturing and solar market economics knowledge valued.",skills:"Thin-film PV market analysis, supply chain modeling, manufacturing cost analytics, tariff impact analysis",note:"54.5 GW booked. Thin-film manufacturer with unique supply chain analytics needs. Roles span traditional energy market analysis and manufacturing/supply chain financial modeling."},
+      {company:"CATL",type:"Battery Cell Manufacturer — TENER Stack",roles:["Market Analyst","Battery Market Analyst","Supply Chain Analyst","Business Development Analyst"],education:"Chemistry, engineering, or economics. Battery technology and materials supply chain knowledge is a strong differentiator.",skills:"Battery market analysis, storage system economics, supply chain pricing, competitive market intelligence",note:"World's largest battery manufacturer. TENER Stack is their 9 MWh grid storage product. US market expansion is creating new analytical roles focused on market entry economics and customer economics modeling."},
+      {company:"LG / Samsung SDI",type:"Premium Cell Manufacturer",roles:["Market Analyst","Energy Storage Analyst","Business Development Analyst","Technical Sales Analyst"],education:"Engineering or economics with battery technology knowledge.",skills:"Battery cell economics, storage system pricing, competitive analysis, supply chain fundamentals",note:"Premium cell suppliers to the utility-scale BESS market. Analyst roles support market development, pricing strategy, and competitive intelligence for storage applications."},
+      {company:"Array Technologies",type:"Solar Tracking + Software Analytics",roles:["Energy Analyst","Market Intelligence Analyst","Product Analytics Analyst","Financial Analyst"],education:"Engineering or economics with solar market knowledge.",skills:"Solar tracking economics, bifacial modeling, energy yield analysis, competitive market research",note:"Leading solar tracker manufacturer with growing software and analytics capabilities. Analyst roles focus on performance data, market intelligence, and project economics."},
+    ]
+  },
+  {
+    id:"advisory",
+    label:"Advisory & M&A Analytics",
+    desc:"Consulting firms and advisory practices specializing in energy M&A, regulatory economics, and market design. These tend to be the highest-compensation entry-level roles and require strong quantitative backgrounds.",
+    accent:"#f97316",
+    companies:[
+      {company:"FTI Consulting",type:"Energy M&A & Asset Valuation",roles:["Analyst","Consultant","Senior Consultant — Energy Practice","Economic Analyst"],education:"Economics, finance, or engineering. Quantitative backgrounds strongly valued for the economic and financial modeling work.",skills:"Energy M&A valuation, expert witness support, regulatory economics, electricity market modeling, financial modeling",note:"FTI's economic consulting practice handles energy M&A, rate cases, and regulatory proceedings. Analyst roles involve real-deal financial and market modeling. High compensation at entry level."},
+      {company:"GE Vernova Consulting",type:"Production Cost & Market Design",roles:["Power Market Analyst","Production Cost Modeler","Market Design Consultant","Grid Planning Analyst"],education:"Electrical engineering, energy economics, or applied math. Production cost modeling experience (PROMOD, PLEXOS, AURORA) is a direct differentiator.",skills:"Production cost modeling, dispatch simulation, market design analysis, grid planning, energy transition analysis",note:"GE Vernova's consulting arm works on market design and grid planning projects for utilities, ISOs, and regulators. Production cost modelers are in high demand."},
+      {company:"NERA Economic Consulting",type:"Regulatory Economics & Litigation",roles:["Analyst","Consultant","Senior Consultant — Energy","Research Associate"],education:"Economics or public policy master's. Quantitative rigor is the top requirement. Columbia, Maryland, and top economics programs common.",skills:"Regulatory economics, electricity market modeling, cost-benefit analysis, expert witness support, econometric analysis",note:"One of the premier economic consulting firms for energy regulatory proceedings. Analyst roles involve econometric analysis and litigation support alongside market modeling."},
+      {company:"Charles River Associates",type:"Economic Consulting — Energy",roles:["Analyst","Associate","Senior Associate — Energy Practice"],education:"Economics, applied math, or finance at graduate level.",skills:"Market simulation, damage estimation, regulatory analysis, competition economics applied to energy markets",note:"CRA's energy practice covers competition, regulatory, and strategy issues. Strong analytical culture with graduate-level economics expected."},
+      {company:"Brattle Group",type:"Energy & Regulatory Economics",roles:["Analyst","Associate","Senior Analyst — Electricity Markets"],education:"Economics or public policy master's. Rice and Mines grads visible. Quant skills are the primary filter.",skills:"Electricity market modeling, cost-benefit analysis, rate case support, resource adequacy analysis",note:"Boutique economic consulting firm with deep energy practice. Resources adequacy, rate design, and electricity market design are core competencies. High analytical standards."},
+      {company:"S&P Global Commodity Insights",type:"Advisory & Benchmark Data",roles:["Market Analyst","Price Reporter","Advisory Consultant","Research Analyst"],education:"Energy economics, finance, or journalism. Commodity market knowledge valued.",skills:"Benchmark price methodology, market advisory, natural gas and power fundamentals, regulatory intelligence",note:"Beyond data products, S&P Global Commodity Insights has a consulting and advisory practice for energy clients. Cross-listed here for its advisory dimension."},
+    ]
+  }
+];
+
+/* ─── RENDER ─── */
+function makeProgramCard(p, cardClass, id) {
+  const tagsHTML = (p.tags||[]).map((t,j)=>`<span class="tag ${tagClasses[j%tagClasses.length]}">${t}</span>`).join('');
+  const badge = p.badge || ('T'+(p.tier||''));
+  const div = document.createElement('div');
+  div.className = `card ${cardClass}`;
+  div.innerHTML = `
+    <button class="card-header" onclick="toggleCard('${id}')">
+      <div class="card-left">
+        <span class="tier-badge">${badge}</span>
+        <div>
+          <div class="card-title">${p.school}</div>
+          <div class="card-subtitle">${p.program}</div>
+        </div>
+      </div>
+      <div class="card-right">
+        <span class="card-location">${p.location||''}</span>
+        <span class="toggle-icon" id="icon-${id}">+</span>
+      </div>
+    </button>
+    <div class="card-body" id="${id}">
+      <div class="meta-grid">
+        <div><div class="field-label">Location</div><div class="field-value">${p.location||'—'}</div></div>
+        <div><div class="field-label">Duration</div><div class="field-value">${p.duration||'—'}</div></div>
+        <div class="full"><div class="field-label">Focus Areas</div><div class="field-value">${p.focus||'—'}</div></div>
+      </div>
+      <div class="why-block"><div class="field-label">Why It Fits</div><div class="field-value">${p.why||''}</div></div>
+      ${tagsHTML?`<div class="tags">${tagsHTML}</div>`:''}
+    </div>`;
+  return div;
+}
+
+function buildGroup(data, containerId, getClass) {
+  const container = document.getElementById(containerId);
+  data.forEach((p,i) => {
+    const id = `${containerId}-${i}`;
+    container.appendChild(makeProgramCard(p, getClass(p), id));
+  });
+}
+
+function buildCompanies() {
+  const container = document.getElementById('companies-list');
+  companySectors.forEach(sector => {
+    const group = document.createElement('div');
+    group.className = 'sector-group';
+
+    // Sector header
+    const hdr = document.createElement('div');
+    hdr.className = 'sector-header';
+    hdr.style.background = sector.accent + '22';
+    hdr.style.borderLeft = `3px solid ${sector.accent}`;
+    hdr.innerHTML = `<div class="sector-label" style="color:${sector.accent}">${sector.label}</div><div class="sector-desc">${sector.desc}</div>`;
+    group.appendChild(hdr);
+
+    const cardsWrap = document.createElement('div');
+    cardsWrap.className = 'cards';
+
+    sector.companies.forEach((c, i) => {
+      const id = `co-${sector.id}-${i}`;
+      const card = document.createElement('div');
+      card.className = 'card company-card';
+      const preview = c.roles.slice(0,2).map((r,j)=>`<span class="co-role-preview">${r}${j<Math.min(1,c.roles.length-1)?' ·':(c.roles.length>2?' · …':'')}</span>`).join('');
+      const allRoles = c.roles.map(r=>`<span class="role-tag">${r}</span>`).join('');
+      card.innerHTML = `
+        <button class="card-header" onclick="toggleCard('${id}')">
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
+              <span class="co-name">${c.company}</span>
+              <span class="co-type">${c.type}</span>
+            </div>
+            <div class="co-roles-preview">${preview}</div>
+          </div>
+          <span class="toggle-icon" id="icon-${id}">+</span>
+        </button>
+        <div class="card-body" id="${id}">
+          <div class="field-label">Roles</div>
+          <div class="roles-list">${allRoles}</div>
+          <div class="field-label">Education Seen in These Roles</div>
+          <div class="field-value" style="margin-bottom:.65rem;">${c.education}</div>
+          <div class="field-label">Key Skills</div>
+          <div class="field-value" style="margin-bottom:.65rem;">${c.skills}</div>
+          <div class="note-box"><div class="field-label">Note</div><div class="field-value">${c.note}</div></div>
+        </div>`;
+      cardsWrap.appendChild(card);
+    });
+
+    group.appendChild(cardsWrap);
+    container.appendChild(group);
+  });
+}
+
+function toggleCard(id) {
+  const body = document.getElementById(id);
+  const icon = document.getElementById('icon-'+id);
+  const open = body.classList.toggle('open');
+  icon.textContent = open ? '−' : '+';
+}
+
+function switchPrimary(name, btn) {
+  document.querySelectorAll('.main-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.primary-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('main-'+name).classList.add('active');
+  btn.classList.add('active');
+  document.getElementById('sec-tabs').style.display = name==='programs' ? 'flex' : 'none';
+}
+
+function switchSec(name, btn) {
+  document.querySelectorAll('.prog-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.sec-tab').forEach(b=>b.classList.remove('active'));
+  document.getElementById('prog-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+/* ─── STARTUP ECOSYSTEMS ─── */
+const startupPrograms = [
+  {badge:"#1",school:"Stanford University",program:"StartX Accelerator + d.school + GSB Entrepreneurship",location:"Palo Alto, CA",duration:"Ongoing",focus:"Deep tech, cleantech, AI, climate — world's most VC-connected startup ecosystem",incubator:"StartX (zero-equity), Cardinal Ventures, BASES, Stanford Social Innovation Review",energyRelevance:"Stanford Energy Club + Precourt Institute for Energy connects graduate students directly to cleantech founders, VCs, and grid technology companies. Bay Area proximity means Aurora, Stem, SunRun and every major cleantech firm is local.",vcOutput:"Most VC-backed founders of any university globally — 1,400+ alumni founders.",note:"If you want to start an energy or cleantech company, Stanford's ecosystem is unmatched. High selectivity and cost, but the network ROI is real and documented.",tags:["#1 Globally","CleanTech","VC Access","Precourt Energy Institute"]},
+  {badge:"#2",school:"UC Berkeley",program:"SkyDeck Accelerator + Haas Entrepreneurship + CITRIS",location:"Berkeley, CA",duration:"Ongoing",focus:"Cleantech, deep tech, biotech, software — Bay Area ecosystem",incubator:"SkyDeck (combined valuation $1.7B+), Free Ventures (student-led), The House",energyRelevance:"Haas Energy Institute, CITRIS Foundry, and Cleantech to Market (C2M) program specifically connect MBA and engineering students to energy startups. LA Cleantech Incubator (LACI) also feeds Berkeley alumni.",vcOutput:"#1 for undergraduate VC-backed founders, #2 overall (PitchBook 2025). Cleantech is a specific strength.",note:"SkyDeck has produced $1.7B+ in combined startup valuation. The C2M program specifically bridges energy technology and commercial development for graduate students.",tags:["#2 Globally","SkyDeck","CleanTech","Bay Area"]},
+  {badge:"#5",school:"MIT",program:"Martin Trust Center + Delta V Accelerator + MIT Energy Initiative",location:"Cambridge, MA",duration:"Ongoing",focus:"Deep tech, hardware, climate tech, energy systems — strong engineering-to-market pipeline",incubator:"Martin Trust Center for MIT Entrepreneurship, Delta V Accelerator, Sandbox Innovation Fund ($50K+ grants), I-Corps",energyRelevance:"MIT Energy Initiative (MITEI) directly funds student energy research and connects to industry partners. The Climate & Sustainability Consortium and Tata Center for Energy focus on energy access and grid technology. The TPP program (tech-policy) produces energy startup founders.",vcOutput:"#5 globally for VC-backed founders. Strong in deep tech and hard tech startups.",note:"MIT's startup support is university-led and rigorous rather than externally accelerated. Best for students who want to commercialize energy engineering research. Delta V is highly competitive.",tags:["#5 Globally","Deep Tech","MITEI","Delta V"]},
+  {badge:"#3",school:"Harvard University",program:"i-Lab + Launch Lab X + Harvard Grid Accelerator",location:"Cambridge, MA",duration:"Ongoing",focus:"Impact ventures, healthtech, climate tech, fintech — Harvard alumni network amplification",incubator:"Harvard Innovation Labs (i-Lab), Launch Lab X (post-grad), Blavatnik Biomedical Accelerator, Harvard Grid Accelerator (physical science focus)",energyRelevance:"Harvard Grid Accelerator specifically supports Harvard-affiliated teams in physical science and energy research. HBS/HKS joint degree students often build policy-adjacent cleantech ventures. Harvard's endowment relationships create unusual access to climate-focused capital.",vcOutput:"#3 globally for VC-backed founders. MBA founders are particularly strong.",note:"The Harvard brand opens LP and institutional investor doors that few other ecosystems can match. Best for policy + market intersection ventures.",tags:["#3 Globally","Grid Accelerator","Impact","HBS Network"]},
+  {badge:"Top 10",school:"University of Pennsylvania (Wharton)",program:"Venture Lab + Pennovation Works + Penn Engineering",location:"Philadelphia, PA",duration:"Ongoing",focus:"Fintech, healthtech, climate tech — Wharton's venture and PE network",incubator:"Penn Venture Lab, Pennovation Center (deep tech incubator), Dorm Room Fund chapter, Wharton Entrepreneurship",energyRelevance:"Pennovation Center is specifically designed for science and engineering-based ventures — relevant for energy hardware and storage startups. Wharton's PE and private credit network is strong for energy project finance entrepreneurship.",vcOutput:"Top 5 globally for MBA-level VC-backed founders. Penn alumni include Warby Parker, Coinbase founders.",note:"Best if you're combining Wharton finance skills with an energy technology venture. The Pennovation Works incubator is purpose-built for deep tech commercialization.",tags:["Top-5 MBA Founders","Pennovation","Wharton VC Network","Deep Tech"]},
+  {badge:"Top 10",school:"Cornell University",program:"eLab Accelerator + Entrepreneurship @ Cornell",location:"Ithaca, NY + NYC (Cornell Tech)",location2:"NYC campus for tech ventures",focus:"AgTech, hardware, climate, software — 8 on-campus incubators, 9 startup funds",incubator:"eLab Accelerator, Cornell Tech (NYC campus), Dorm Room Fund, Entrepreneurship at Cornell",energyRelevance:"Cornell's Atkinson Center for Sustainability and the Cornell Energy Systems Institute connect graduate students to energy research and startups. Cornell Tech NYC campus is close to energy finance and cleantech VC.",vcOutput:"#6 globally for VC-backed founders (PitchBook 2025). Notable alumni ventures include Wayfair, Casper.",note:"8 on-campus incubators is unusual even among top schools. Cornell Tech in NYC adds a second campus ecosystem specifically designed for deep tech ventures close to energy markets.",tags:["8 Incubators","Cornell Tech NYC","Energy Systems Institute","AgTech+CleanTech"]},
+  {badge:"Top 15",school:"Northwestern University",program:"The Garage + Kellogg Entrepreneurship + NUvention",location:"Evanston, IL",duration:"Ongoing",focus:"Hardware, healthcare, cleantech, fintech — Chicago VC access",incubator:"The Garage (on-campus co-working + programming), NUvention courses (experiential startup courses), Kellogg accelerator programs",energyRelevance:"NUvention: Energy is a specific course that pairs engineering and business students to develop energy ventures. The Garage has housed energy-adjacent startups. Chicago's VC and PE ecosystem is accessible for energy transition ventures.",vcOutput:"#9 globally for graduate-level VC-backed founders. Notable alumni ventures include Grubhub, Siri.",note:"The MSES program + The Garage + NUvention: Energy creates a genuinely useful combination for energy entrepreneurs who want both market knowledge and startup resources.",tags:["The Garage","NUvention Energy","Chicago VC","#9 Graduate Founders"]},
+  {badge:"Top 20",school:"University of Illinois Urbana-Champaign (UIUC)",program:"EnterpriseWorks + iVenture + Cozad New Venture Challenge",location:"Urbana-Champaign, IL",duration:"Ongoing",focus:"Engineering-based deep tech, agtech, cleantech, software — 120+ companies in Research Park",incubator:"EnterpriseWorks (technology incubator, 250+ startup graduates, $1.2B+ VC raised), iVenture Accelerator (summer full-time, $10K/team + $2.5K stipends), Cozad New Venture Challenge ($550K+ in prizes, 190+ teams in 2024)",energyRelevance:"'Terravate Energy' and 'ClimeCast' are recent cleantech Cozad winners. The Research Park houses Ameren (energy company) as a corporate partner. Sun King (off-grid solar, $260M Series D) is a UIUC-origin startup. The MEng Energy Systems program feeds directly into the entrepreneurship ecosystem.",vcOutput:"EnterpriseWorks alone has supported $1.2B+ in venture funding. #16 for tech-business combined programs. Microsoft hires more UIUC graduates than any other university.",note:"The Cozad New Venture Challenge is what you were thinking of — UIUC's largest and oldest venture program (26 years, $2.8M+ total prizes). iVenture is the summer accelerator. EnterpriseWorks is the incubator. Together, this is one of the strongest Midwest startup ecosystems for engineering-based energy ventures.",tags:["Cozad New Venture Challenge","iVenture","EnterpriseWorks","Midwest Deep Tech"]},
+  {badge:"Top 20",school:"Georgia Tech",program:"CREATE-X + ATDC + VentureLab",location:"Atlanta, GA",duration:"Ongoing",focus:"Deep tech, cleantech, AI, hardware — #2 US university startup incubator (UBI Global)",incubator:"ATDC (Advanced Technology Development Center — oldest US university incubator), CREATE-X (seed funding + launch support + Startup Launch Certificate), VentureLab",energyRelevance:"ATDC has hosted numerous cleantech and energy startups. CREATE-X specifically offers a Startup Launch Certificate alongside the MSEEM program. Georgia Power, Southern Company, and a growing Atlanta cleantech ecosystem provide industry connections.",vcOutput:"ATDC is one of the most recognized university incubators globally. CREATE-X has launched 1,000+ companies.",note:"CREATE-X is unique in that it provides a formal Startup Launch Certificate alongside the graduate degree — you can earn both simultaneously. The ATDC is the oldest university technology incubator in the US.",tags:["CREATE-X","ATDC","Startup Launch Certificate","#2 University Incubator"]},
+  {badge:"Top 20",school:"University of Texas at Austin",program:"Austin Technology Incubator (ATI) + Longhorn Startup",location:"Austin, TX",duration:"Ongoing",focus:"Cleantech, energy tech, software, deeptech — Austin as energy-tech hub",incubator:"Austin Technology Incubator (ATI), Longhorn Startup Accelerator, Texas Innovation Center, IC² Institute, Herb Kelleher Center for Entrepreneurship",energyRelevance:"ATI has a dedicated cleantech program. Austin is increasingly the US's second most important energy city after Houston — ERCOT headquarters, Tesla Energy Austin, Aurora Energy Research Austin office are all here. McCombs' CleanTech incubator + Energy Management and Innovation Center (EMIC) directly connect MBA students to energy venture creation.",vcOutput:"639 alumni entrepreneurs. Austin startup ecosystem grew 400%+ in the last decade.",note:"UT Austin may be the single best university to combine an energy economics degree with startup exposure specifically for US power markets — ERCOT, cleantech, and grid analytics are all native to Austin.",tags:["ATI CleanTech","Austin Energy Hub","ERCOT Ecosystem","Longhorn Startup"]},
+];
+
+function buildStartups() {
+  const container = document.getElementById('startups-list');
+  startupPrograms.forEach((p, i) => {
+    const id = `startup-${i}`;
+    const tagsHTML = (p.tags||[]).map((t,j)=>`<span class="tag ${tagClasses[j%tagClasses.length]}">${t}</span>`).join('');
+    const card = document.createElement('div');
+    card.className = 'card card-tech';
+    card.innerHTML = `
+      <button class="card-header" onclick="toggleCard('${id}')">
+        <div class="card-left">
+          <span class="tier-badge">${p.badge}</span>
+          <div>
+            <div class="card-title">${p.school}</div>
+            <div class="card-subtitle">${p.program}</div>
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="card-location">${p.location}</span>
+          <span class="toggle-icon" id="icon-${id}">+</span>
+        </div>
+      </button>
+      <div class="card-body" id="${id}">
+        <div class="meta-grid">
+          <div><div class="field-label">Location</div><div class="field-value">${p.location}</div></div>
+          <div><div class="field-label">VC Output</div><div class="field-value">${p.vcOutput}</div></div>
+          <div class="full"><div class="field-label">Key Incubators & Programs</div><div class="field-value">${p.incubator}</div></div>
+          <div class="full"><div class="field-label">Energy & CleanTech Relevance</div><div class="field-value">${p.energyRelevance}</div></div>
+        </div>
+        <div class="why-block"><div class="field-label">Note</div><div class="field-value">${p.note}</div></div>
+        ${tagsHTML?`<div class="tags">${tagsHTML}</div>`:''}
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+/* ─── DATA SCIENCE ─── */
+const dsPrograms = [
+  {badge:"MS",school:"New York University",program:"MS in Data Science",location:"New York, NY",duration:"18 months",gpa:"Avg admitted: 3.81",gre:"Optional",focus:"Machine learning, statistics, data engineering — highly competitive, strong grades in relevant coursework required",why:"One of the most selective MS DS programs in the US. Average admitted GPA is 3.81, so this is a reach for most applicants. Strong quant coursework and research experience matter. NYC location is excellent for finance and tech data science roles.",tags:["Highly Competitive","NYC","ML","Research"]},
+  {badge:"MS",school:"Columbia University",program:"MS in Data Science",location:"New York, NY",duration:"18 months",gpa:"Strong academic record expected",gre:"Optional",focus:"Joint program across multiple departments; machine learning, statistics, data systems — capstone required",why:"Strong brand and interdisciplinary structure. The joint program design lets students pull courses from engineering, statistics, and business. GRE optional makes it slightly more accessible. Capstone project is a good portfolio piece.",tags:["Interdisciplinary","NYC","Brand","Capstone"]},
+  {badge:"MS",school:"Carnegie Mellon University",program:"MS in Data Analytics for Science",location:"Pittsburgh, PA",duration:"12 months",gpa:"Strong academic record expected",gre:"Required (waived for CMU grads)",focus:"Full-time one-year program; capstone project; applied data science for scientific domains",why:"CMU's data science programs are among the most technically rigorous in the country. The 12-month format is efficient. GRE required for non-CMU applicants. Best for applicants with a strong quantitative or engineering undergraduate background.",tags:["Rigorous","12 Months","Capstone","CMU"]},
+  {badge:"MS",school:"Northwestern University",program:"Accelerated MS in Data Science",location:"Evanston, IL",duration:"12 months",gpa:"Not specified",gre:"Not required",focus:"Blend of online and on-campus; 5 specializations available; strong career services",why:"True 12-month program from a top-15 university. No GRE requirement makes it more accessible. Five specializations let you focus — the analytics/modeling track pairs well with energy markets work. Northwestern's Chicago-area location is good for consulting and finance recruiting.",tags:["12 Months","No GRE","Flexible Specializations","Northwestern"]},
+  {badge:"MS",school:"University of Chicago",program:"MS in Applied Data Science",location:"Chicago, IL",duration:"12 months",gpa:"Not specified",gre:"Not specified",focus:"One-year full-time program; applied focus; machine learning, data engineering, professional practicum",why:"UChicago brand with an applied (not purely academic) orientation. Chicago location is strong for finance and trading roles where data science skills are increasingly required. The applied focus is more industry-relevant than research-oriented peers.",tags:["12 Months","Applied","Chicago","Finance Access"]},
+  {badge:"MS",school:"University of San Francisco",program:"MS in Data Science",location:"San Francisco, CA",duration:"12 months",gpa:"Not specified",gre:"Not required",focus:"Full-time starting July; guaranteed practicum experience; applied data science",why:"Starts in July rather than September — a useful option if you want to enter the workforce in summer. No GRE required. Guaranteed practicum experience is a strong differentiator for portfolio building. San Francisco location for tech industry recruiting.",tags:["12 Months","No GRE","Practicum","Bay Area"]},
+  {badge:"MS",school:"UC Berkeley",program:"Master of Information & Data Science (MIDS — Online)",location:"Berkeley, CA",duration:"12–20 months",gpa:"Typically 3.5+",gre:"Required (GRE/GMAT/MCAT)",focus:"Online program; machine learning, data engineering, data visualization, capstone; 30–35% acceptance rate",why:"One of the most selective online data science programs available. Berkeley brand is strong. GRE or GMAT required, and typical admitted GPA is well above 3.0. The online format allows working professionals to continue earning while studying. 30–35% acceptance rate is relatively accessible for a school of this caliber.",tags:["Online","Selective","Berkeley Brand","GRE Required"]},
+  {badge:"MS",school:"University of Washington",program:"MS in Data Science",location:"Seattle, WA",duration:"18 months",gpa:"Minimum 3.0 (last 2 years)",gre:"Not accepted",focus:"Data science methods, machine learning, ethics, applied projects — explicitly does not accept GRE/GMAT",why:"Unusual in that UW explicitly does not accept standardized test scores — making application evaluation purely academic + experiential. Minimum 3.0 GPA in last two years of undergrad. Seattle is a strong tech market. Pairs well with energy-adjacent data roles at utilities or grid analytics firms.",tags:["No GRE (by policy)","Seattle","Tech Market","18 Months"]},
+  {badge:"MS",school:"Harvard Extension School",program:"Master in Data Science",location:"Cambridge, MA (also online)",duration:"Flexible (up to 5 years)",gpa:"Minimum 3.0 cumulative; B or higher in admission courses",gre:"Not required",focus:"Part-time friendly; flexible pacing; quantitative foundations in statistics, ML, data systems",why:"Most flexible program on this list — up to 5 years to complete, part-time friendly, and no GRE required. You must earn a B or higher in admission courses before formally entering the program. Good option if you're working and can't commit to a full-time program. Harvard brand carries weight despite the Extension School context.",tags:["Flexible","Part-Time Friendly","No GRE","Harvard"]},
+  {badge:"MS",school:"Georgia State University",program:"MS in Data Science & Analytics",location:"Atlanta, GA",duration:"16 months",gpa:"Not specified",gre:"Not required",focus:"Business school program; ML, analytics, data systems — full or part-time options",why:"Business school framing makes this more career-oriented than research-oriented. No GRE requirement. Full or part-time options are helpful for working professionals. Atlanta is a growing data and fintech hub.",tags:["Business School","No GRE","Flexible","Atlanta"]},
+  {badge:"MS",school:"Illinois Institute of Technology",program:"Master of Data Science",location:"Chicago, IL",duration:"Variable",gpa:"Minimum 3.0 for GRE waiver",gre:"Waived with 3.0+ GPA",focus:"Professional master's; applied data science methods, industry-focused curriculum",why:"GRE waiver with a 3.0+ GPA makes this accessible for applicants concerned about test scores. Professional master's orientation means coursework is industry-applied rather than academic. Chicago location for finance, consulting, and analytics roles.",tags:["Accessible","No GRE (3.0+ GPA)","Professional","Chicago"]},
+  {badge:"MS",school:"Appalachian State University",program:"MS in Data Science",location:"Boone, NC",duration:"~12 months",gpa:"Not specified",gre:"Required (waivers available)",focus:"8 concentration options; flexible curriculum structure; application deadline July 1",why:"One of the most affordable data science programs in the US. Eight concentrations let you tailor the degree significantly. GRE waivers available. Good option if cost is a major factor and you want a shorter, focused program.",tags:["Affordable","8 Concentrations","GRE Waivers","12 Months"]},
+  {badge:"MS",school:"Clarkson University",program:"MS in Data Analytics",location:"Potsdam, NY",duration:"Variable",gpa:"Not specified",gre:"Recommended, not mandatory",focus:"Capstone project required; average cohort has ~3 years work experience; applied analytics",why:"Cohort skews toward working professionals with experience. GRE recommended but not required. Capstone project is good for portfolio development. Lower cost than major urban programs.",tags:["Work Experience","Capstone","Accessible","Flexible"]},
+];
+
+function buildDS() {
+  const container = document.getElementById('ds-list');
+  dsPrograms.forEach((p,i) => {
+    const id = `ds-${i}`;
+    const tagsHTML = (p.tags||[]).map((t,j)=>`<span class="tag ${tagClasses[j%tagClasses.length]}">${t}</span>`).join('');
+    const card = document.createElement('div');
+    card.className = 'card card-ds';
+    card.innerHTML = `
+      <button class="card-header" onclick="toggleCard('${id}')">
+        <div class="card-left">
+          <span class="tier-badge">${p.badge}</span>
+          <div>
+            <div class="card-title">${p.school}</div>
+            <div class="card-subtitle">${p.program}</div>
+          </div>
+        </div>
+        <div class="card-right">
+          <span class="card-location">${p.location}</span>
+          <span class="toggle-icon" id="icon-${id}">+</span>
+        </div>
+      </button>
+      <div class="card-body" id="${id}">
+        <div class="meta-grid">
+          <div><div class="field-label">Location</div><div class="field-value">${p.location}</div></div>
+          <div><div class="field-label">Duration</div><div class="field-value">${p.duration}</div></div>
+          <div><div class="field-label">Min / Avg GPA</div><div class="field-value">${p.gpa}</div></div>
+          <div><div class="field-label">GRE</div><div class="field-value">${p.gre}</div></div>
+          <div class="full"><div class="field-label">Focus Areas</div><div class="field-value">${p.focus}</div></div>
+        </div>
+        <div class="why-block"><div class="field-label">Notes</div><div class="field-value">${p.why}</div></div>
+        ${tagsHTML?`<div class="tags">${tagsHTML}</div>`:''}
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
+/* ─── RESEARCH GROUPS ─── */
+const researchGroups = [
+  {
+    university: "University of Texas at Austin",
+    uniShort: "UT Austin",
+    accent: "#f97316",
+    groups: [
+      {
+        name: "Sheila Olmstead — LBJ School of Public Affairs",
+        type: "Energy & Environmental Economics",
+        contact: "sheila.olmstead@austin.utexas.edu",
+        focus: "Electricity market externalities, shale gas economics, market-based environmental policy, regulatory avoidance, LCOE analysis with environmental costs",
+        relevance: "Most directly relevant if your angle is energy markets + regulatory economics. Former Senior Economist for Energy and Environment at the President's Council of Economic Advisers. Editor of JAERE. Research published in PNAS, JEP, JEEP.",
+        raLikelihood: "High — thesis-based research in LBJ School, active grant funding through Resources for the Future",
+        action: "Email directly referencing her LCOE or electricity externalities work. Mention your optimization background and interest in regulatory economics.",
+        tags: ["Regulatory Economics","LBJ School","Electricity Markets","Environmental Policy"]
+      },
+      {
+        name: "UT Energy Institute — Chevron Energy Graduate Fellowship",
+        type: "Cross-disciplinary Energy Research Hub",
+        contact: "energy.utexas.edu",
+        focus: "Energy systems research across 400+ faculty spanning Cockrell, LBJ, McCombs, Jackson School, and Law. Annual Chevron $10K fellowship awards for graduate energy researchers.",
+        relevance: "The Energy Institute coordinates funding and connections across all UT energy research. The Chevron Graduate Fellowship is stackable on top of an RA — apply every year regardless of your funding status.",
+        raLikelihood: "Medium — fellowship is competitive but worth applying. Institute can connect you to faculty with open RA positions.",
+        action: "Register for the Graduate Portfolio Program in Energy Studies (GPPES) — any UT graduate student can add it. Attend UT Energy Week and UT Energy Symposium to meet faculty.",
+        tags: ["Cross-Disciplinary","Fellowship $10K","400+ Faculty","GPPES Portfolio"]
+      },
+      {
+        name: "Jackson School — Energy and Earth Resources (EER) Program",
+        type: "Energy Economics, Risk Analysis & Policy — Thesis-Based",
+        contact: "jsg.utexas.edu/eer",
+        focus: "Energy economics, decision and risk analysis, policy and regulatory frameworks, strategic planning, critical minerals, renewable energy — all students write a thesis",
+        relevance: "The thesis requirement is what makes this research-fundable rather than professional. Concentrations in energy economics and decision/risk analysis map directly to BESS valuation and market modeling work.",
+        raLikelihood: "High — thesis-based program with active faculty research grants. RA positions most common here of any UT program.",
+        action: "Identify a specific EER faculty member working on electricity markets or energy economics. Email them before applying with a brief research proposal idea.",
+        tags: ["Thesis-Based","Energy Economics","Risk Analysis","RA Most Likely"]
+      },
+      {
+        name: "Prof. Eric Bickel — Cockrell School (Mechanical Engineering)",
+        type: "Decision Making Under Uncertainty / Energy & Climate Policy",
+        contact: "ebickel@utexas.edu",
+        focus: "Decision making under uncertainty, value of information, energy and climate policy, business strategy — brings economic decision analysis into engineering",
+        relevance: "His work on value of information and decision analysis under uncertainty is directly applicable to BESS dispatch optimization and stochastic energy market modeling.",
+        raLikelihood: "Medium — engineering department with grant funding, but more selective than LBJ or EER",
+        action: "Email referencing his decision analysis and energy policy work. Connect it to your interest in stochastic optimization for storage markets.",
+        tags: ["Decision Analysis","Uncertainty","Engineering+Economics","Climate Policy"]
+      },
+    ]
+  },
+  {
+    university: "Georgia Institute of Technology",
+    uniShort: "Georgia Tech",
+    accent: "#f59e0b",
+    groups: [
+      {
+        name: "ISyE — Energy and Sustainable Systems Group",
+        type: "Optimization, Financial Engineering & Energy Systems",
+        contact: "isye.gatech.edu/research/isye-fields-specialization/energy-and-sustainable-systems",
+        focus: "Optimization, game theory, financial engineering applied to energy systems; financial approaches to energy and carbon markets; environmental life-cycle assessment; stochastic modeling of power grids",
+        relevance: "This is the single most directly applicable research group to what Aurora, Ascend Analytics, and Modo Energy do commercially. Skills built here — stochastic optimization, energy market game theory, financial engineering for carbon markets — are exactly what these firms hire for.",
+        raLikelihood: "High — ISyE has the largest optimization faculty concentration in the US with heavy grant funding. RA positions for MS students actively available.",
+        action: "Reach out to ISyE Energy & Sustainable Systems faculty directly. Reference the Energy Optimization Workshop series and specific papers. Python and optimization solver (Gurobi/CPLEX) experience is a strong pitch.",
+        tags: ["#1 Optimization Faculty","Energy Markets","Game Theory","Financial Engineering","BESS Directly Relevant"]
+      },
+      {
+        name: "Prof. Santanu Dey — ISyE",
+        type: "Integer Programming & Power Systems Optimization",
+        contact: "isye.gatech.edu/users/santanu-dey",
+        focus: "Mixed-integer programming, energy storage system optimization, transmission constraint decomposition for decentralized power systems — 2025 papers directly on BESS and power network optimization",
+        relevance: "Actively publishing on the exact mathematical problems Aurora and Ascend Analytics solve — BESS dispatch as an optimization problem, power grid decomposition. One of the most directly relevant individual faculty members across all three schools.",
+        raLikelihood: "High — active grants, recent high-impact publications, strong Python/optimization research pipeline",
+        action: "Email specifically referencing his 2025 INFORMS paper on energy storage systems and interdiction problems. Pitch your Python optimization background as directly applicable to his research.",
+        tags: ["BESS Optimization","Mixed-Integer Programming","Power Networks","2025 Active Research"]
+      },
+      {
+        name: "Georgia Tech Advanced Battery Center (GTABC)",
+        type: "Energy Storage Research, Policy & Education — Founded 2024",
+        contact: "energy.gatech.edu",
+        focus: "Grid-connected stationary BESS, long duration storage (flow batteries, thermal, pumped hydro), energy system controls and management, BESS modeling and operational economics — live BESS installation on campus for experiments",
+        relevance: "Brand new in 2024 — actively building its graduate research cohort. The center has a real BESS installation where researchers develop digital twin models and optimize operational and economic performance. This is as close as academia gets to what Modo Energy does commercially.",
+        raLikelihood: "High — new center with fresh funding, 20+ faculty, 150+ researchers, actively recruiting",
+        action: "Contact the GTABC directly via the Strategic Energy Institute. Mention your interest in BESS operational economics and dispatch optimization specifically.",
+        tags: ["Founded 2024","Live BESS Installation","Digital Twin","Storage Economics","Actively Recruiting"]
+      },
+      {
+        name: "Strategic Energy Institute (SEI)",
+        type: "Interdisciplinary Energy Research Hub",
+        contact: "energy.gatech.edu",
+        focus: "Unites engineering, science, economics, and policy faculty. Industry partnerships with energy companies. Annual Energy Optimization Workshop connecting academia, national labs (MIT, Caltech, Los Alamos, UT Austin), and industry.",
+        relevance: "The SEI is how Georgia Tech connects its internal research to the firms you want to work for. The annual workshop has brought speakers from Aurora's peer firms. Attending or presenting here as a graduate student puts you in the room with hiring managers.",
+        raLikelihood: "Medium — funding flows through member faculty rather than the institute directly. Use SEI to identify which faculty have active grants.",
+        action: "Attend the Energy Optimization Workshop. The student poster sessions come with financial support. This is a career-building event, not just an academic one.",
+        tags: ["Industry Partnerships","National Labs","Annual Workshop","Networking to Firms"]
+      },
+    ]
+  },
+  {
+    university: "University of Michigan",
+    uniShort: "Michigan",
+    accent: "#38bdf8",
+    groups: [
+      {
+        name: "Ford School — Energy & Environment Group",
+        type: "Energy Regulation, Policy & Environmental Economics",
+        contact: "fordschool.umich.edu/impact/energy-environment",
+        focus: "Energy regulation, electricity market policy, climate agreements, corporate energy investment, Michigan utility structure — top-10 public policy program for environmental policy",
+        relevance: "Best Michigan entry point for regulatory economics and electricity market research. Prof. Catherine Hausman works specifically on energy market economics. The Ford School connects directly to Michigan utility regulators and MISO market structure.",
+        raLikelihood: "Medium-High — research-active faculty with external funding (NSF, DOE). MPP thesis track is more fundable than the professional track.",
+        action: "Email Prof. Catherine Hausman directly — her research covers electricity market economics and distributional effects of energy policy. Reference her work on energy market regulation.",
+        tags: ["Top-10 Policy Program","Electricity Market Regulation","MISO Access","Catherine Hausman"]
+      },
+      {
+        name: "Prof. Samuel Stolper — SEAS",
+        type: "Energy & Climate Policy / Machine Learning Applications",
+        contact: "seas.umich.edu/research/faculty/samuel-stolper",
+        focus: "Equitable and efficient environmental, energy, and climate policy; machine learning for household energy use targeting; pollution exposure inequality — affiliated with MIT Center for Energy and Environmental Policy Research",
+        relevance: "Rare combination of energy policy and machine learning methodology. His work using ML to target energy efficiency interventions is a bridge between the quant skills you're building and the policy context of energy markets.",
+        raLikelihood: "Medium — SEAS faculty with external grants, but smaller research group than ISyE or LBJ",
+        action: "Email referencing his 2025 Economic Journal paper on machine learning for household energy use. Connect your Python/optimization background to his applied ML methodology.",
+        tags: ["Machine Learning + Energy","Climate Policy","SEAS","MIT CEEPR Affiliate"]
+      },
+      {
+        name: "Michigan Energy Institute (MEI)",
+        type: "Cross-Campus Energy Research Hub",
+        contact: "energy.umich.edu",
+        focus: "Grid modernization, energy storage, EV integration, hydrogen, energy policy — cross-campus hub connecting Engineering, Ross, Ford School, and SEAS. External funding from DOE, NSF, EPRI, and industry partners.",
+        relevance: "Michigan's equivalent of UT Austin's Energy Institute. Coordinates funding and faculty connections across the university. Strong in EV-grid integration research given Michigan's automotive industry ties — relevant for storage and grid analytics roles.",
+        raLikelihood: "Medium — use MEI to identify faculty with active grants rather than approaching MEI directly",
+        action: "Check MEI's current research projects list to find faculty with active DOE or EPRI grants in storage or grid economics. Those faculty are most likely to have RA funding available.",
+        tags: ["Grid Modernization","EV+Storage","DOE Funded","Cross-Campus Hub","EPRI Partner"]
+      },
+    ]
+  },
+];
+
+const raColors = {
+  "High": { bg:"#052e16", color:"#4ade80", border:"#166534" },
+  "High — active grants, recent high-impact publications, strong Python/optimization research pipeline": { bg:"#052e16", color:"#4ade80", border:"#166534" },
+  "Medium-High": { bg:"#082f49", color:"#38bdf8", border:"#075985" },
+  "Medium": { bg:"#1c1008", color:"#f97316", border:"#78350f" },
+};
+
+function getRaColor(likelihood) {
+  if (likelihood.startsWith("High")) return { bg:"#052e16", color:"#4ade80", border:"#166534" };
+  if (likelihood.startsWith("Medium-High")) return { bg:"#082f49", color:"#38bdf8", border:"#075985" };
+  return { bg:"#1c1008", color:"#f97316", border:"#78350f" };
+}
+
+function buildResearch() {
+  const container = document.getElementById('research-list');
+  researchGroups.forEach(uni => {
+    const uniGroup = document.createElement('div');
+    uniGroup.className = 'sector-group';
+
+    const hdr = document.createElement('div');
+    hdr.className = 'sector-header';
+    hdr.style.background = uni.accent + '1a';
+    hdr.style.borderLeft = `3px solid ${uni.accent}`;
+    hdr.innerHTML = `<div class="sector-label" style="color:${uni.accent}">${uni.university}</div>
+      <div class="sector-desc">${uni.groups.length} research groups and faculty contacts identified for RA opportunities.</div>`;
+    uniGroup.appendChild(hdr);
+
+    const cardsWrap = document.createElement('div');
+    cardsWrap.className = 'cards';
+
+    uni.groups.forEach((g, i) => {
+      const id = `rg-${uni.uniShort.replace(/\s/g,'')}-${i}`;
+      const card = document.createElement('div');
+      card.className = 'card company-card';
+      const raC = getRaColor(g.raLikelihood);
+      const tagsHTML = (g.tags||[]).map((t,j)=>`<span class="tag ${tagClasses[j%tagClasses.length]}">${t}</span>`).join('');
+
+      card.innerHTML = `
+        <button class="card-header" onclick="toggleCard('${id}')">
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
+              <span class="co-name">${g.name}</span>
+              <span class="co-type">${g.type}</span>
+            </div>
+            <div style="display:flex;align-items:center;gap:.5rem;margin-top:.3rem;flex-wrap:wrap;">
+              <span style="font-size:.62rem;font-family:'Courier New',monospace;padding:.1rem .38rem;border-radius:3px;background:${raC.bg};color:${raC.color};border:1px solid ${raC.border};">RA: ${g.raLikelihood.split(' —')[0]}</span>
+            </div>
+          </div>
+          <span class="toggle-icon" id="icon-${id}">+</span>
+        </button>
+        <div class="card-body" id="${id}">
+          <div class="field-label">Research Focus</div>
+          <div class="field-value" style="margin-bottom:.65rem;">${g.focus}</div>
+          <div class="field-label">Why It's Relevant to You</div>
+          <div class="field-value" style="margin-bottom:.65rem;">${g.relevance}</div>
+          <div class="field-label">RA Likelihood</div>
+          <div class="field-value" style="margin-bottom:.65rem;">${g.raLikelihood}</div>
+          <div class="note-box">
+            <div class="field-label">How to Approach</div>
+            <div class="field-value">${g.action}</div>
+          </div>
+          <div style="display:flex;align-items:center;gap:.4rem;margin-top:.65rem;flex-wrap:wrap;">
+            <span style="font-size:.58rem;font-family:'Courier New',monospace;color:#52525b;text-transform:uppercase;letter-spacing:.08em;">Contact:</span>
+            <span style="font-size:.72rem;color:#a78bfa;font-family:'Courier New',monospace;">${g.contact}</span>
+          </div>
+          ${tagsHTML ? `<div class="tags" style="margin-top:.5rem;">${tagsHTML}</div>` : ''}
+        </div>`;
+      cardsWrap.appendChild(card);
+    });
+
+    uniGroup.appendChild(cardsWrap);
+    container.appendChild(uniGroup);
+  });
+}
+
+// Init
+buildGroup(energyEconPrograms, 'energy-econ-list', p => `tier-${p.tier}`);
+buildGroup(techPrograms,        'tech-list',        () => 'card-tech');
+buildGroup(financePrograms,     'finance-list',     () => 'card-fin');
+buildGroup(mbaPrograms,         'mba-list',         () => 'card-mba');
+buildGroup(dualPrograms,        'dual-list',        () => 'card-dual');
+buildCompanies();
+buildStartups();
+buildDS();
+buildResearch();
+
+/* ─── MY SCHOOLS ─── */
+const mySchools = [
+  {
+    name:"University of Texas at Austin",
+    location:"Austin, TX",
+    programs:[
+      {badge:"MSF",   color:"#a78bfa", tab:"Finance & Economics",       name:"MS in Finance (MSF)",                                   note:"10 months, July start, STEM-OPT, practicum, GRE optional"},
+      {badge:"MBA",   color:"#f97316", tab:"MBA — Energy",              name:"MBA — Energy Finance or CleanTech Concentration",        note:"2 years, KBH Energy Center, commodity derivatives track"},
+      {badge:"MS",    color:"#22c55e", tab:"Energy Econ & Policy (T1)", name:"MS Economics / McCombs Energy Management",               note:"18 months, ERCOT access, Aurora Austin office nearby"},
+      {badge:"MBA/MPP",color:"#4ade80",tab:"Dual Degrees",              name:"MBA/MPP — UT Austin (LBJ School)",                       note:"Policy + business, LBJ School energy research, RA funding possible"},
+      {badge:"MEng",  color:"#818cf8", tab:"Tech & Interdisciplinary",  name:"Cockrell School — MS Energy Systems Engineering",        note:"Research-based, RA funding most realistic here"},
+      {badge:"EC",    color:"#f59e0b", tab:"Startup Ecosystems",        name:"Austin Technology Incubator (ATI) + Longhorn Startup",   note:"ATI CleanTech program, ERCOT/Austin energy hub ecosystem"},
+    ]
+  },
+  {
+    name:"UC Berkeley",
+    location:"Berkeley, CA",
+    programs:[
+      {badge:"MFE",   color:"#a78bfa", tab:"Finance & Economics",       name:"Master of Financial Engineering (MFE)",                  note:"#1 ranked MFE, Spring start, STEM-OPT, GRE/GMAT required, ~$77K"},
+      {badge:"MBA",   color:"#f97316", tab:"MBA — Energy",              name:"MBA — Energy Institute / Sustainable Business (Haas)",   note:"2 years, Energy Institute at Haas, Bay Area cleantech"},
+      {badge:"MS",    color:"#818cf8", tab:"Tech & Interdisciplinary",  name:"MS in Energy and Resources (ERG)",                       note:"2 years, research-oriented, thesis required, interdisciplinary"},
+      {badge:"MIDS",  color:"#60a5fa", tab:"Data Science Programs",     name:"Master of Information & Data Science (Online)",          note:"12–20 months, 30–35% acceptance, GRE required, $1.7B+ SkyDeck"},
+      {badge:"⚠️",    color:"#71717a", tab:"Finance & Economics",       name:"No MS in Economics — PhD only",                          note:"Berkeley Econ dept does not offer a terminal master's degree"},
+      {badge:"EC",    color:"#f59e0b", tab:"Startup Ecosystems",        name:"SkyDeck Accelerator + Haas Energy Institute",            note:"#2 globally for VC-backed founders, Cleantech to Market (C2M) program"},
+    ]
+  },
+  {
+    name:"Duke University",
+    location:"Durham, NC",
+    programs:[
+      {badge:"MBA",   color:"#f97316", tab:"MBA — Energy",              name:"MBA — Energy & Environment (EDGE Center, Fuqua)",        note:"2 years, Energy Markets & Policy course, transition finance"},
+      {badge:"MQM",   color:"#a78bfa", tab:"Finance & Economics",       name:"Master of Quantitative Management (MQM) — Finance Track",note:"10 months, quant/analytics, no energy concentration — requires strong energy background independently"},
+      {badge:"MBA/MPP",color:"#4ade80",tab:"Dual Degrees",              name:"MBA/MPP — Fuqua + Sanford School",                       note:"3–3.5 years, EDGE Center + Sanford policy depth, accessible vs Harvard"},
+      {badge:"MS",    color:"#27272a", tab:"Energy Econ & Policy (T3)", name:"Nicholas School / Sanford School programs",              note:"18–24 months, sustainability/consulting, BloombergNEF placement"},
+    ]
+  },
+  {
+    name:"Columbia University",
+    location:"New York, NY",
+    programs:[
+      {badge:"MPA",   color:"#38bdf8", tab:"Energy Econ & Policy (T2)", name:"MPA/MIA — Climate, Energy & Environment (SIPA)",         note:"2 years, CGEP network, NYC energy market access, policy + markets"},
+      {badge:"MA",    color:"#a78bfa", tab:"Finance & Economics",       name:"MA in Economics / MS in Financial Economics",            note:"12–18 months, quant econ, NYC commodity trading access"},
+      {badge:"MS",    color:"#60a5fa", tab:"Data Science Programs",     name:"MS in Data Science",                                    note:"18 months, joint program across departments, capstone, GRE optional"},
+      {badge:"JD/MBA",color:"#4ade80", tab:"Dual Degrees",              name:"Three-Year JD/MBA (Law + CBS)",                         note:"3 years accelerated, NYC energy law + finance, SIPA/CGEP network"},
+    ]
+  },
+  {
+    name:"University of Michigan",
+    location:"Ann Arbor, MI",
+    programs:[
+      {badge:"MS",    color:"#818cf8", tab:"Tech & Interdisciplinary",  name:"MS in Energy Systems Engineering / Environment & Sustainability", note:"18–24 months, Michigan Energy Institute, strong Midwest utility network"},
+      {badge:"MBA/MPP",color:"#4ade80",tab:"Dual Degrees",              name:"MBA/MPP — Ross + Gerald R. Ford School",                 note:"3 years, Ford School energy economics faculty, MISO/Midwest utility recruiting"},
+      {badge:"JD/MPP",color:"#4ade80", tab:"Dual Degrees",              name:"JD/MPP — Michigan Law + Ford School",                    note:"14 dual degree programs at Michigan Law, Ford School energy policy"},
+    ]
+  },
+  {
+    name:"Georgia Tech",
+    location:"Atlanta, GA",
+    programs:[
+      {badge:"MSEEM", color:"#818cf8", tab:"Energy Econ & Policy (T3)", name:"MS in Sustainable Energy and Environmental Management (MSEEM)", note:"1–2 years, full or part-time, utility regulation, green energy financing, data analytics"},
+      {badge:"MSEEM", color:"#818cf8", tab:"Tech & Interdisciplinary",  name:"MS Sustainable Energy & Environmental Mgmt — Tech track",  note:"Cross-listed — engineering, public policy, business, ISE all contribute courses"},
+      {badge:"ISyE",  color:"#818cf8", tab:"Quant / Ops Research",      name:"MS in Operations Research (ISyE — #1 ranked)",            note:"Optimization, stochastic processes, ML — directly applicable to BESS dispatch and power market modeling"},
+      {badge:"EC",    color:"#f59e0b", tab:"Startup Ecosystems",        name:"CREATE-X + ATDC + VentureLab",                            note:"#2 US university incubator globally, Startup Launch Certificate alongside degree, 1,000+ companies launched"},
+    ]
+  },
+];
+
+const badgeColorMap = {
+  "#a78bfa": {bg:"#1e1b4b", color:"#a78bfa"},
+  "#f97316": {bg:"#1c1008", color:"#f97316"},
+  "#22c55e": {bg:"#052e16", color:"#22c55e"},
+  "#4ade80": {bg:"#091a12", color:"#4ade80"},
+  "#818cf8": {bg:"#140f1f", color:"#818cf8"},
+  "#f59e0b": {bg:"#1c1200", color:"#f59e0b"},
+  "#38bdf8": {bg:"#082f49", color:"#38bdf8"},
+  "#60a5fa": {bg:"#0c1520", color:"#60a5fa"},
+  "#71717a": {bg:"#27272a", color:"#71717a"},
+  "#27272a": {bg:"#18181b", color:"#a1a1aa"},
+};
+
+function buildMySchools() {
+  const body = document.getElementById('mySchoolsBody');
+  body.innerHTML = '';
+  mySchools.forEach(school => {
+    const section = document.createElement('div');
+    section.className = 'ms-school';
+    const progsHTML = school.programs.map(p => {
+      const c = badgeColorMap[p.color] || {bg:"#27272a", color:"#a1a1aa"};
+      return `<div class="ms-prog">
+        <span class="ms-prog-badge" style="background:${c.bg};color:${c.color};">${p.badge}</span>
+        <div class="ms-prog-info">
+          <div class="ms-prog-name">${p.name}</div>
+          <div class="ms-prog-tab">${p.tab} &nbsp;·&nbsp; ${p.note}</div>
+        </div>
+      </div>`;
+    }).join('');
+    section.innerHTML = `
+      <div class="ms-school-name">
+        ${school.name}
+        <span class="ms-school-loc">${school.location}</span>
+      </div>
+      <div class="ms-programs">${progsHTML}</div>`;
+    body.appendChild(section);
+  });
+}
+
+function openMySchools() {
+  buildMySchools();
+  document.getElementById('mySchoolsModal').classList.add('open');
+  document.body.style.overflow = 'hidden';
+}
+function closeMySchools() {
+  document.getElementById('mySchoolsModal').classList.remove('open');
+  document.body.style.overflow = '';
+}
+function closeOnOverlay(e) {
+  if (e.target === document.getElementById('mySchoolsModal')) closeMySchools();
+}
+</script>
+</body>
+</html>
