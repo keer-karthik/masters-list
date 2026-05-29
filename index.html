@@ -6,192 +6,216 @@
   <title>Masters Programs Search</title>
   <link rel="icon" href="data:,">
   <style>
-    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: 'Georgia','Times New Roman',serif; background:#09090b; color:#f4f4f5; min-height:100vh; }
+    *, *::before, *::after { box-sizing:border-box; margin:0; padding:0; }
+    html, body { height:100%; }
+    body { font-family:'Georgia','Times New Roman',serif; background:#ffffff; color:#111827; font-size:15px; }
 
-    .header { border-bottom:1px solid #27272a; padding:1.6rem 1.5rem; display:flex; align-items:flex-start; justify-content:space-between; gap:1rem; }
-    .header-left { flex:1; min-width:0; }
-    .header-eyebrow { font-family:'Courier New',monospace; font-size:.67rem; letter-spacing:.15em; text-transform:uppercase; color:#f59e0b; margin-bottom:.3rem; }
-    .header h1 { font-size:1.6rem; font-weight:700; color:#f4f4f5; letter-spacing:-.02em; }
-    .header p { color:#71717a; font-size:.8rem; margin-top:.2rem; }
-
-    /* My Schools button */
-    .my-schools-btn {
-      flex-shrink:0; margin-top:.25rem;
-      background:#f59e0b; color:#09090b;
-      border:none; border-radius:6px;
-      padding:.5rem 1rem;
-      font-family:'Courier New',monospace;
-      font-size:.68rem; font-weight:700;
-      letter-spacing:.06em; text-transform:uppercase;
-      cursor:pointer; white-space:nowrap;
-      transition:background .15s;
+    /* ── LAYOUT ── */
+    .app { display:flex; flex-direction:column; height:100vh; }
+    .app-header {
+      flex-shrink:0; background:#ffffff; border-bottom:1px solid #e5e7eb;
+      padding:1.2rem 1.5rem; display:flex; align-items:flex-start;
+      justify-content:space-between; gap:1rem;
     }
-    .my-schools-btn:hover { background:#fbbf24; }
+    .header-left { flex:1; min-width:0; }
+    .header-eyebrow { font-family:system-ui,-apple-system,sans-serif; font-size:.72rem; letter-spacing:.12em; text-transform:uppercase; color:#d97706; margin-bottom:.2rem; }
+    .app-header h1 { font-size:1.35rem; font-weight:700; color:#111827; letter-spacing:-.02em; }
+    .app-header p { color:#6b7280; font-size:.875rem; margin-top:.15rem; font-family:system-ui,-apple-system,sans-serif; }
 
-    /* Modal overlay */
+    /* ── MY SCHOOLS BUTTON ── */
+    .my-schools-btn {
+      flex-shrink:0; background:#ffffff; color:#d97706;
+      border:1.5px solid #d97706; border-radius:6px;
+      padding:.45rem .9rem;
+      font-family:system-ui,-apple-system,sans-serif;
+      font-size:.8rem; font-weight:600; letter-spacing:.03em;
+      cursor:pointer; white-space:nowrap; transition:background .15s,color .15s;
+    }
+    .my-schools-btn:hover { background:#d97706; color:#ffffff; }
+
+    /* ── MODAL ── */
     .modal-overlay {
       display:none; position:fixed; inset:0;
-      background:rgba(0,0,0,.75); z-index:100;
+      background:rgba(0,0,0,.45); z-index:100;
       align-items:flex-start; justify-content:center;
       padding:2rem 1rem; overflow-y:auto;
     }
     .modal-overlay.open { display:flex; }
     .modal {
-      background:#111113; border:1px solid #3f3f46;
+      background:#ffffff; border:1px solid #e5e7eb;
       border-radius:10px; width:100%; max-width:720px;
-      margin:auto;
+      margin:auto; box-shadow:0 20px 60px rgba(0,0,0,.12);
     }
     .modal-header {
       display:flex; align-items:center; justify-content:space-between;
-      padding:1.1rem 1.4rem; border-bottom:1px solid #27272a;
+      padding:1.1rem 1.4rem; border-bottom:1px solid #e5e7eb;
     }
-    .modal-title {
-      font-size:1rem; font-weight:700; color:#f4f4f5; letter-spacing:-.01em;
-    }
+    .modal-title { font-size:1rem; font-weight:700; color:#111827; letter-spacing:-.01em; }
     .modal-close {
-      background:none; border:none; color:#71717a;
+      background:none; border:none; color:#9ca3af;
       font-size:1.3rem; cursor:pointer; line-height:1;
-      padding:.2rem .4rem; border-radius:4px;
+      padding:.2rem .4rem; border-radius:4px; transition:background .15s,color .15s;
     }
-    .modal-close:hover { color:#f4f4f5; background:#27272a; }
+    .modal-close:hover { color:#111827; background:#f3f4f6; }
     .modal-body { padding:1.1rem 1.4rem; }
 
-    /* School sections in modal */
-    .ms-school {
-      margin-bottom:1.4rem; padding-bottom:1.4rem;
-      border-bottom:1px solid #27272a;
-    }
+    /* ── MODAL SCHOOL SECTIONS ── */
+    .ms-school { margin-bottom:1.4rem; padding-bottom:1.4rem; border-bottom:1px solid #e5e7eb; }
     .ms-school:last-child { margin-bottom:0; padding-bottom:0; border-bottom:none; }
-    .ms-school-name {
-      font-size:.85rem; font-weight:700; color:#f4f4f5;
-      margin-bottom:.5rem; display:flex; align-items:center; gap:.6rem;
-    }
-    .ms-school-loc {
-      font-family:'Courier New',monospace; font-size:.62rem;
-      color:#52525b; font-weight:400;
-    }
+    .ms-school-name { font-size:.95rem; font-weight:700; color:#111827; margin-bottom:.5rem; display:flex; align-items:center; gap:.6rem; }
+    .ms-school-loc { font-family:system-ui,-apple-system,sans-serif; font-size:.7rem; color:#9ca3af; font-weight:400; }
     .ms-programs { display:flex; flex-direction:column; gap:.35rem; }
-    .ms-prog {
-      display:flex; align-items:flex-start; gap:.6rem;
-      background:#18181b; border:1px solid #27272a;
-      border-radius:5px; padding:.5rem .7rem;
-    }
-    .ms-prog-badge {
-      font-family:'Courier New',monospace; font-size:.58rem; font-weight:700;
-      padding:.1rem .35rem; border-radius:3px; white-space:nowrap;
-      margin-top:1px; flex-shrink:0;
-    }
+    .ms-prog { display:flex; align-items:flex-start; gap:.6rem; background:#f9fafb; border:1px solid #e5e7eb; border-radius:5px; padding:.5rem .7rem; }
+    .ms-prog-badge { font-family:system-ui,-apple-system,sans-serif; font-size:.65rem; font-weight:700; padding:.15rem .35rem; border-radius:3px; white-space:nowrap; margin-top:1px; flex-shrink:0; }
     .ms-prog-info { min-width:0; }
-    .ms-prog-name { font-size:.78rem; color:#f4f4f5; font-weight:600; line-height:1.3; }
-    .ms-prog-tab { font-size:.65rem; color:#71717a; font-family:'Courier New',monospace; margin-top:.15rem; }
+    .ms-prog-name { font-size:.875rem; color:#111827; font-weight:600; line-height:1.3; }
+    .ms-prog-tab { font-size:.75rem; color:#6b7280; font-family:system-ui,-apple-system,sans-serif; margin-top:.15rem; }
 
-    .primary-tabs { display:flex; border-bottom:1px solid #27272a; padding:0 1.5rem; background:#09090b; }
-    .primary-tab { background:none; border:none; border-bottom:2px solid transparent; padding:.85rem 1.2rem; font-family:'Courier New',monospace; font-size:.7rem; letter-spacing:.08em; text-transform:uppercase; cursor:pointer; color:#52525b; margin-bottom:-1px; transition:color .2s,border-color .2s; white-space:nowrap; }
-    .primary-tab:hover { color:#d4d4d8; }
-    .primary-tab.active { border-bottom-color:#f59e0b; color:#f59e0b; }
+    /* ── APP BODY / SIDEBAR ── */
+    .app-body { flex:1; display:flex; overflow:hidden; min-height:0; }
+    .sidebar {
+      width:220px; flex-shrink:0; background:#f8fafc;
+      border-right:1px solid #e5e7eb; overflow-y:auto; padding:1.5rem 0;
+    }
+    .nav-section { margin-bottom:.25rem; }
+    .nav-item {
+      display:block; width:100%; background:none; border:none;
+      border-left:2px solid transparent; text-align:left;
+      padding:.45rem 1.2rem;
+      font-family:system-ui,-apple-system,sans-serif;
+      font-size:.72rem; font-weight:600; letter-spacing:.07em;
+      text-transform:uppercase; color:#374151;
+      cursor:pointer; transition:color .15s,border-color .15s; white-space:nowrap;
+    }
+    .nav-item:hover { color:#111827; }
+    .nav-item.active { color:#d97706; border-left-color:#d97706; }
+    .nav-sub {
+      display:block; width:100%; background:none; border:none;
+      border-left:2px solid transparent; text-align:left;
+      padding:.3rem 1.2rem .3rem 1.85rem;
+      font-family:system-ui,-apple-system,sans-serif;
+      font-size:.7rem; font-weight:400; color:#6b7280;
+      cursor:pointer; transition:color .15s,border-color .15s; white-space:nowrap;
+    }
+    .nav-sub:hover { color:#374151; }
+    .nav-sub.active { color:#d97706; border-left-color:#d97706; font-weight:500; }
+    .nav-divider { height:1px; background:#e5e7eb; margin:.6rem 1.2rem; }
 
-    .secondary-tabs { display:flex; gap:.3rem; flex-wrap:wrap; padding:.85rem 1.5rem 0; border-bottom:1px solid #27272a; background:#111113; }
-    .sec-tab { background:none; border:1px solid #3f3f46; border-bottom:none; padding:.4rem .75rem; font-family:'Courier New',monospace; font-size:.62rem; letter-spacing:.05em; text-transform:uppercase; cursor:pointer; color:#71717a; border-radius:4px 4px 0 0; transition:all .15s; white-space:nowrap; }
-    .sec-tab:hover { color:#d4d4d8; border-color:#52525b; }
-    .sec-tab.active { background:#09090b; color:#f59e0b; border-color:#f59e0b; }
-
-    .content { padding:1.4rem 1.5rem; max-width:900px; }
+    /* ── CONTENT ── */
+    .content { flex:1; overflow-y:auto; padding:2rem 2.5rem; min-width:0; }
     .main-panel { display:none; }
     .main-panel.active { display:block; }
     .prog-panel { display:none; }
     .prog-panel.active { display:block; }
 
-    .panel-header { margin-bottom:1.1rem; }
-    .panel-title { font-size:.95rem; font-weight:600; color:#f4f4f5; margin-bottom:.2rem; }
-    .panel-desc { font-size:.76rem; color:#71717a; line-height:1.55; }
+    /* ── PANEL HEADERS ── */
+    .panel-header { margin-bottom:1.4rem; }
+    .panel-title { font-size:1.1rem; font-weight:700; color:#111827; margin-bottom:.3rem; letter-spacing:-.01em; }
+    .panel-desc { font-size:.875rem; color:#6b7280; line-height:1.65; font-family:system-ui,-apple-system,sans-serif; }
 
-    .legend { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1.1rem; }
+    /* ── LEGEND ── */
+    .legend { display:flex; gap:1rem; flex-wrap:wrap; margin-bottom:1.2rem; }
     .legend-item { display:flex; align-items:center; gap:.4rem; }
-    .legend-badge { font-size:.6rem; font-weight:700; padding:.1rem .42rem; border-radius:3px; font-family:'Courier New',monospace; }
-    .legend-label { font-size:.7rem; color:#71717a; }
+    .legend-badge { font-size:.65rem; font-weight:700; padding:.15rem .45rem; border-radius:4px; font-family:system-ui,-apple-system,sans-serif; }
+    .legend-label { font-size:.75rem; color:#6b7280; font-family:system-ui,-apple-system,sans-serif; }
 
-    .cards { display:flex; flex-direction:column; gap:.5rem; }
-    .card { border-radius:7px; overflow:hidden; }
+    /* ── CARDS ── */
+    .cards { display:flex; flex-direction:column; gap:.6rem; }
+    .card { border-radius:8px; overflow:hidden; transition:box-shadow .15s; }
+    .card:hover { box-shadow:0 2px 8px rgba(0,0,0,.08); }
 
-    .tier-1   { background:#052e16; border:1px solid #166534; }
-    .tier-2   { background:#082f49; border:1px solid #075985; }
-    .tier-3   { background:#27272a; border:1px solid #3f3f46; }
-    .card-tech{ background:#140f1f; border:1px solid #3730a3; }
-    .card-fin { background:#0f0f1a; border:1px solid #4c1d95; }
-    .card-mba { background:#1c1008; border:1px solid #78350f; }
-    .card-dual{ background:#091a12; border:1px solid #14532d; }
-    .card-ds  { background:#0c1520; border:1px solid #1e40af; }
-    .company-card { background:#18181b; border:1px solid #3f3f46; }
+    .tier-1   { background:#f0fdf4; border:1.5px solid #4ade80; }
+    .tier-2   { background:#eff6ff; border:1.5px solid #60a5fa; }
+    .tier-3   { background:#fafafa; border:1.5px solid #d1d5db; }
+    .card-tech{ background:#eef2ff; border:1.5px solid #818cf8; }
+    .card-fin { background:#faf5ff; border:1.5px solid #a855f7; }
+    .card-mba { background:#fff7ed; border:1.5px solid #f97316; }
+    .card-dual{ background:#ecfdf5; border:1.5px solid #34d399; }
+    .card-ds  { background:#f0f9ff; border:1.5px solid #38bdf8; }
+    .company-card { background:#ffffff; border:1.5px solid #e5e7eb; }
 
-    .card-header { width:100%; background:none; border:none; text-align:left; padding:.85rem 1.05rem; display:flex; align-items:flex-start; justify-content:space-between; gap:.7rem; cursor:pointer; }
-    .card-header:hover { filter:brightness(1.09); }
+    .card-header {
+      width:100%; background:none; border:none; text-align:left;
+      padding:.8rem 1rem; display:flex; align-items:flex-start;
+      justify-content:space-between; gap:.7rem; cursor:pointer;
+    }
     .card-left { display:flex; align-items:flex-start; gap:.6rem; flex:1; min-width:0; }
 
-    .tier-badge { font-size:.58rem; font-weight:700; padding:.1rem .38rem; border-radius:3px; white-space:nowrap; margin-top:2px; font-family:'Courier New',monospace; flex-shrink:0; }
-    .tier-1  .tier-badge { background:#22c55e; color:#052e16; }
-    .tier-2  .tier-badge { background:#38bdf8; color:#082f49; }
-    .tier-3  .tier-badge { background:#a1a1aa; color:#18181b; }
-    .card-tech .tier-badge { background:#818cf8; color:#140f1f; }
-    .card-fin  .tier-badge { background:#a78bfa; color:#0f0f1a; }
-    .card-mba  .tier-badge { background:#f97316; color:#1c1008; }
-    .card-dual .tier-badge { background:#4ade80; color:#091a12; }
-    .card-ds   .tier-badge { background:#60a5fa; color:#0c1520; }
+    .tier-badge { font-size:.65rem; font-weight:700; padding:.15rem .4rem; border-radius:4px; white-space:nowrap; margin-top:2px; font-family:system-ui,-apple-system,sans-serif; flex-shrink:0; }
+    .tier-1   .tier-badge { background:#dcfce7; color:#15803d; }
+    .tier-2   .tier-badge { background:#dbeafe; color:#1d4ed8; }
+    .tier-3   .tier-badge { background:#f3f4f6; color:#6b7280; }
+    .card-tech .tier-badge { background:#e0e7ff; color:#4338ca; }
+    .card-fin  .tier-badge { background:#f3e8ff; color:#7c3aed; }
+    .card-mba  .tier-badge { background:#ffedd5; color:#c2410c; }
+    .card-dual .tier-badge { background:#dcfce7; color:#166534; }
+    .card-ds   .tier-badge { background:#e0f2fe; color:#0369a1; }
 
-    .card-title { font-size:.83rem; font-weight:600; color:#f4f4f5; line-height:1.3; }
-    .card-subtitle { font-size:.7rem; color:#71717a; margin-top:.15rem; }
+    .card-title { font-size:1rem; font-weight:600; color:#111827; line-height:1.3; }
+    .card-subtitle { font-size:.875rem; color:#6b7280; margin-top:.15rem; font-family:system-ui,-apple-system,sans-serif; }
     .card-right { display:flex; align-items:center; gap:.6rem; flex-shrink:0; }
-    .card-location { font-size:.66rem; color:#52525b; font-family:'Courier New',monospace; }
-    .toggle-icon { font-size:1rem; color:#52525b; width:15px; text-align:center; }
+    .card-location { font-size:.72rem; color:#9ca3af; font-family:system-ui,-apple-system,sans-serif; }
+    .toggle-icon { font-size:1rem; color:#9ca3af; width:16px; text-align:center; }
 
-    .card-body { display:none; padding:.85rem 1.05rem 1.05rem; border-top:1px solid rgba(255,255,255,0.07); }
+    .card-body { display:none; padding:.9rem 1rem 1.1rem; border-top:1px solid rgba(0,0,0,.06); }
     .card-body.open { display:block; }
-    .meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:.6rem; margin-bottom:.75rem; }
+    .meta-grid { display:grid; grid-template-columns:1fr 1fr; gap:.8rem; margin-bottom:.85rem; }
     .meta-grid .full { grid-column:1/-1; }
-    .field-label { font-size:.58rem; text-transform:uppercase; letter-spacing:.1em; color:#52525b; font-family:'Courier New',monospace; margin-bottom:.18rem; }
-    .field-value { font-size:.78rem; color:#d4d4d8; line-height:1.55; }
+    .field-label { font-size:.7rem; text-transform:uppercase; letter-spacing:.08em; color:#9ca3af; font-family:system-ui,-apple-system,sans-serif; margin-bottom:.2rem; font-weight:600; }
+    .field-value { font-size:.875rem; color:#374151; line-height:1.65; }
     .why-block { margin-top:.6rem; }
-    .why-block .field-value { font-size:.8rem; line-height:1.62; }
-    .tags { display:flex; flex-wrap:wrap; gap:.32rem; margin-top:.75rem; }
-    .tag { font-size:.6rem; padding:.16rem .48rem; border-radius:999px; font-family:'Courier New',monospace; }
-    .tag-0 { background:#451a03; color:#fcd34d; }
-    .tag-1 { background:#1e1b4b; color:#a5b4fc; }
-    .tag-2 { background:#4c0519; color:#fca5a5; }
-    .tag-3 { background:#042f2e; color:#5eead4; }
-    .tag-4 { background:#2e1065; color:#d8b4fe; }
+    .why-block .field-value { font-size:.9rem; line-height:1.7; color:#374151; }
 
-    .co-name { font-size:.83rem; font-weight:600; color:#f4f4f5; }
-    .co-type { font-size:.6rem; padding:.1rem .42rem; border-radius:999px; background:#27272a; color:#a1a1aa; border:1px solid #3f3f46; font-family:'Courier New',monospace; white-space:nowrap; }
-    .co-roles-preview { display:flex; flex-wrap:wrap; gap:.2rem; margin-top:.32rem; }
-    .co-role-preview { font-size:.68rem; color:#d97706; }
-    .roles-list { display:flex; flex-wrap:wrap; gap:.32rem; margin-bottom:.75rem; }
-    .role-tag { font-size:.66rem; background:#451a03; color:#fcd34d; border:1px solid #78350f; padding:.2rem .48rem; border-radius:4px; font-family:'Courier New',monospace; }
-    .note-box { background:#27272a; border-radius:5px; padding:.6rem .85rem; margin-top:.6rem; }
+    .tags { display:flex; flex-wrap:wrap; gap:.35rem; margin-top:.85rem; }
+    .tag { font-size:.65rem; padding:.18rem .5rem; border-radius:999px; font-family:system-ui,-apple-system,sans-serif; font-weight:500; }
+    .tag-0 { background:#fef3c7; color:#92400e; }
+    .tag-1 { background:#e0e7ff; color:#3730a3; }
+    .tag-2 { background:#fee2e2; color:#991b1b; }
+    .tag-3 { background:#ccfbf1; color:#134e4a; }
+    .tag-4 { background:#f3e8ff; color:#6b21a8; }
 
-    /* Sector group headers */
-    .sector-group { margin-bottom:1.6rem; }
-    .sector-header { padding:.55rem .9rem; border-radius:6px 6px 0 0; margin-bottom:.4rem; }
-    .sector-label { font-family:'Courier New',monospace; font-size:.68rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
-    .sector-desc { font-size:.72rem; color:#a1a1aa; margin-top:.2rem; line-height:1.45; }
+    .co-name { font-size:1rem; font-weight:600; color:#111827; }
+    .co-type { font-size:.65rem; padding:.15rem .45rem; border-radius:999px; background:#f3f4f6; color:#6b7280; border:1px solid #e5e7eb; font-family:system-ui,-apple-system,sans-serif; white-space:nowrap; }
+    .co-roles-preview { display:flex; flex-wrap:wrap; gap:.2rem; margin-top:.35rem; }
+    .co-role-preview { font-size:.75rem; color:#d97706; font-family:system-ui,-apple-system,sans-serif; }
+    .roles-list { display:flex; flex-wrap:wrap; gap:.35rem; margin-bottom:.85rem; }
+    .role-tag { font-size:.7rem; background:#fef3c7; color:#92400e; border:1px solid #fde68a; padding:.2rem .5rem; border-radius:4px; font-family:system-ui,-apple-system,sans-serif; }
+    .note-box { background:#fffbeb; border-left:3px solid #fde68a; border-radius:0 5px 5px 0; padding:.65rem .9rem; margin-top:.65rem; }
+    .note-box .field-label { color:#d97706; }
+    .note-box .field-value { color:#78350f; }
 
-    @media(max-width:520px){
-      .meta-grid{grid-template-columns:1fr;}
-      .card-location{display:none;}
-      .header h1{font-size:1.25rem;}
-      .sec-tab{font-size:.58rem; padding:.35rem .55rem;}
+    .sector-group { margin-bottom:2rem; }
+    .sector-header { padding:.65rem 1rem; border-radius:7px 7px 0 0; margin-bottom:.5rem; }
+    .sector-label { font-family:system-ui,-apple-system,sans-serif; font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; }
+    .sector-desc { font-size:.825rem; color:#6b7280; margin-top:.25rem; line-height:1.55; font-family:system-ui,-apple-system,sans-serif; }
+
+    @media(max-width:640px){
+      .app { height:auto; }
+      .app-body { flex-direction:column; overflow:visible; }
+      .sidebar { width:100%; height:auto; display:flex; flex-direction:row; overflow-x:auto; padding:.5rem 0; border-right:none; border-bottom:1px solid #e5e7eb; flex-wrap:nowrap; }
+      .nav-section { display:flex; flex-direction:row; margin-bottom:0; }
+      .nav-item { padding:.4rem .75rem; border-left:none; border-bottom:2px solid transparent; font-size:.65rem; }
+      .nav-item.active { color:#d97706; border-bottom-color:#d97706; border-left:none; }
+      .nav-sub { padding:.4rem .65rem; border-left:none; border-bottom:2px solid transparent; font-size:.6rem; }
+      .nav-sub.active { color:#d97706; border-bottom-color:#d97706; border-left:none; }
+      .nav-divider { display:none; }
+      .content { overflow:visible; padding:1.25rem 1rem; }
+      .meta-grid { grid-template-columns:1fr; }
+      .card-location { display:none; }
     }
   </style>
 </head>
 <body>
+<div class="app">
 
-<div class="header">
+<header class="app-header">
   <div class="header-left">
     <p class="header-eyebrow">Career Reference</p>
     <h1>Masters Programs Search</h1>
     <p>Energy Markets, Data Science &amp; Target Companies</p>
   </div>
   <button class="my-schools-btn" onclick="openMySchools()">⭐ My Schools</button>
-</div>
+</header>
 
 <!-- My Schools Modal -->
 <div class="modal-overlay" id="mySchoolsModal" onclick="closeOnOverlay(event)">
@@ -204,23 +228,32 @@
   </div>
 </div>
 
-<div class="primary-tabs">
-  <button class="primary-tab active" onclick="switchPrimary('programs',this)">Energy Programs</button>
-  <button class="primary-tab" onclick="switchPrimary('datascience',this)">Data Science Programs</button>
-  <button class="primary-tab" onclick="switchPrimary('companies',this)">Companies &amp; Roles</button>
-  <button class="primary-tab" onclick="switchPrimary('research',this)">Research Groups</button>
-</div>
+<div class="app-body">
+  <aside class="sidebar">
+    <nav class="nav-section">
+      <button class="nav-item active" onclick="switchPrimary('programs',this)">Energy Programs</button>
+      <button class="nav-sub active" onclick="switchSec('energy-econ',this)">Econ &amp; Policy</button>
+      <button class="nav-sub" onclick="switchSec('tech',this)">Tech &amp; Interdisciplinary</button>
+      <button class="nav-sub" onclick="switchSec('finance',this)">Finance &amp; Economics</button>
+      <button class="nav-sub" onclick="switchSec('mba',this)">MBA — Energy</button>
+      <button class="nav-sub" onclick="switchSec('dual',this)">Dual Degrees</button>
+      <button class="nav-sub" onclick="switchSec('startups',this)">Startup Ecosystems</button>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-section">
+      <button class="nav-item" onclick="switchPrimary('datascience',this)">Data Science</button>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-section">
+      <button class="nav-item" onclick="switchPrimary('companies',this)">Companies &amp; Roles</button>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-section">
+      <button class="nav-item" onclick="switchPrimary('research',this)">Research Groups</button>
+    </nav>
+  </aside>
 
-<div class="secondary-tabs" id="sec-tabs">
-  <button class="sec-tab active" onclick="switchSec('energy-econ',this)">Energy Econ &amp; Policy</button>
-  <button class="sec-tab" onclick="switchSec('tech',this)">Tech &amp; Interdisciplinary</button>
-  <button class="sec-tab" onclick="switchSec('finance',this)">Finance &amp; Economics</button>
-  <button class="sec-tab" onclick="switchSec('mba',this)">MBA — Energy</button>
-  <button class="sec-tab" onclick="switchSec('dual',this)">Dual Degrees</button>
-  <button class="sec-tab" onclick="switchSec('startups',this)">Startup Ecosystems</button>
-</div>
-
-<div class="content">
+  <main class="content">
 
   <div id="main-programs" class="main-panel active">
 
@@ -228,13 +261,13 @@
     <div id="prog-energy-econ" class="prog-panel active">
       <div class="panel-header">
         <div class="panel-title">Energy Economics &amp; Policy</div>
-        <div class="panel-desc">Dedicated programs at the intersection of energy markets, economic modeling, and policy. Most direct path to analyst roles at Wood Mac, Aurora, BloombergNEF, and similar firms. <strong style="color:#fcd34d;">★ = RA/TA tuition waiver confirmed by university policy for master's students.</strong></div>
+        <div class="panel-desc">Dedicated programs at the intersection of energy markets, economic modeling, and policy. Most direct path to analyst roles at Wood Mac, Aurora, BloombergNEF, and similar firms. <strong style="color:#d97706;">★ = RA/TA tuition waiver confirmed by university policy for master's students.</strong></div>
       </div>
       <div class="legend">
-        <div class="legend-item"><span class="legend-badge" style="background:#22c55e;color:#052e16;">T1</span><span class="legend-label">Tier 1 — Strong Fit</span></div>
-        <div class="legend-item"><span class="legend-badge" style="background:#38bdf8;color:#082f49;">T2</span><span class="legend-label">Tier 2 — Policy + Market</span></div>
-        <div class="legend-item"><span class="legend-badge" style="background:#a1a1aa;color:#18181b;">T3</span><span class="legend-label">Tier 3 — Worth Knowing</span></div>
-        <div class="legend-item"><span class="legend-badge" style="background:#fcd34d;color:#1c1008;">★RA</span><span class="legend-label">RA/TA tuition waiver confirmed</span></div>
+        <div class="legend-item"><span class="legend-badge" style="background:#dcfce7;color:#15803d;">T1</span><span class="legend-label">Tier 1 — Strong Fit</span></div>
+        <div class="legend-item"><span class="legend-badge" style="background:#dbeafe;color:#1d4ed8;">T2</span><span class="legend-label">Tier 2 — Policy + Market</span></div>
+        <div class="legend-item"><span class="legend-badge" style="background:#f3f4f6;color:#6b7280;">T3</span><span class="legend-label">Tier 3 — Worth Knowing</span></div>
+        <div class="legend-item"><span class="legend-badge" style="background:#fef3c7;color:#92400e;">★RA</span><span class="legend-label">RA/TA tuition waiver confirmed</span></div>
       </div>
       <div class="cards" id="energy-econ-list"></div>
     </div>
@@ -309,6 +342,8 @@
     <div class="cards" id="research-list"></div>
   </div>
 
+  </main>
+</div>
 </div>
 
 <script>
@@ -594,15 +629,14 @@ function toggleCard(id) {
 
 function switchPrimary(name, btn) {
   document.querySelectorAll('.main-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.primary-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.nav-item').forEach(b=>b.classList.remove('active'));
   document.getElementById('main-'+name).classList.add('active');
   btn.classList.add('active');
-  document.getElementById('sec-tabs').style.display = name==='programs' ? 'flex' : 'none';
 }
 
 function switchSec(name, btn) {
   document.querySelectorAll('.prog-panel').forEach(p=>p.classList.remove('active'));
-  document.querySelectorAll('.sec-tab').forEach(b=>b.classList.remove('active'));
+  document.querySelectorAll('.nav-sub').forEach(b=>b.classList.remove('active'));
   document.getElementById('prog-'+name).classList.add('active');
   btn.classList.add('active');
 }
@@ -845,16 +879,16 @@ const researchGroups = [
 ];
 
 const raColors = {
-  "High": { bg:"#052e16", color:"#4ade80", border:"#166534" },
-  "High — active grants, recent high-impact publications, strong Python/optimization research pipeline": { bg:"#052e16", color:"#4ade80", border:"#166534" },
-  "Medium-High": { bg:"#082f49", color:"#38bdf8", border:"#075985" },
-  "Medium": { bg:"#1c1008", color:"#f97316", border:"#78350f" },
+  "High": { bg:"#dcfce7", color:"#15803d", border:"#86efac" },
+  "High — active grants, recent high-impact publications, strong Python/optimization research pipeline": { bg:"#dcfce7", color:"#15803d", border:"#86efac" },
+  "Medium-High": { bg:"#dbeafe", color:"#1d4ed8", border:"#93c5fd" },
+  "Medium": { bg:"#ffedd5", color:"#c2410c", border:"#fed7aa" },
 };
 
 function getRaColor(likelihood) {
-  if (likelihood.startsWith("High")) return { bg:"#052e16", color:"#4ade80", border:"#166534" };
-  if (likelihood.startsWith("Medium-High")) return { bg:"#082f49", color:"#38bdf8", border:"#075985" };
-  return { bg:"#1c1008", color:"#f97316", border:"#78350f" };
+  if (likelihood.startsWith("High")) return { bg:"#dcfce7", color:"#15803d", border:"#86efac" };
+  if (likelihood.startsWith("Medium-High")) return { bg:"#dbeafe", color:"#1d4ed8", border:"#93c5fd" };
+  return { bg:"#ffedd5", color:"#c2410c", border:"#fed7aa" };
 }
 
 function buildResearch() {
@@ -889,7 +923,7 @@ function buildResearch() {
               <span class="co-type">${g.type}</span>
             </div>
             <div style="display:flex;align-items:center;gap:.5rem;margin-top:.3rem;flex-wrap:wrap;">
-              <span style="font-size:.62rem;font-family:'Courier New',monospace;padding:.1rem .38rem;border-radius:3px;background:${raC.bg};color:${raC.color};border:1px solid ${raC.border};">RA: ${g.raLikelihood.split(' —')[0]}</span>
+              <span style="font-size:.65rem;font-family:system-ui,-apple-system,sans-serif;font-weight:600;padding:.15rem .4rem;border-radius:4px;background:${raC.bg};color:${raC.color};border:1px solid ${raC.border};">RA: ${g.raLikelihood.split(' —')[0]}</span>
             </div>
           </div>
           <span class="toggle-icon" id="icon-${id}">+</span>
@@ -906,8 +940,8 @@ function buildResearch() {
             <div class="field-value">${g.action}</div>
           </div>
           <div style="display:flex;align-items:center;gap:.4rem;margin-top:.65rem;flex-wrap:wrap;">
-            <span style="font-size:.58rem;font-family:'Courier New',monospace;color:#52525b;text-transform:uppercase;letter-spacing:.08em;">Contact:</span>
-            <span style="font-size:.72rem;color:#a78bfa;font-family:'Courier New',monospace;">${g.contact}</span>
+            <span style="font-size:.65rem;font-family:system-ui,-apple-system,sans-serif;color:#9ca3af;text-transform:uppercase;letter-spacing:.08em;font-weight:600;">Contact:</span>
+            <span style="font-size:.75rem;color:#4338ca;font-family:system-ui,-apple-system,sans-serif;">${g.contact}</span>
           </div>
           ${tagsHTML ? `<div class="tags" style="margin-top:.5rem;">${tagsHTML}</div>` : ''}
         </div>`;
@@ -998,16 +1032,16 @@ const mySchools = [
 ];
 
 const badgeColorMap = {
-  "#a78bfa": {bg:"#1e1b4b", color:"#a78bfa"},
-  "#f97316": {bg:"#1c1008", color:"#f97316"},
-  "#22c55e": {bg:"#052e16", color:"#22c55e"},
-  "#4ade80": {bg:"#091a12", color:"#4ade80"},
-  "#818cf8": {bg:"#140f1f", color:"#818cf8"},
-  "#f59e0b": {bg:"#1c1200", color:"#f59e0b"},
-  "#38bdf8": {bg:"#082f49", color:"#38bdf8"},
-  "#60a5fa": {bg:"#0c1520", color:"#60a5fa"},
-  "#71717a": {bg:"#27272a", color:"#71717a"},
-  "#27272a": {bg:"#18181b", color:"#a1a1aa"},
+  "#a78bfa": {bg:"#f3e8ff", color:"#7c3aed"},
+  "#f97316": {bg:"#ffedd5", color:"#c2410c"},
+  "#22c55e": {bg:"#dcfce7", color:"#15803d"},
+  "#4ade80": {bg:"#dcfce7", color:"#166534"},
+  "#818cf8": {bg:"#e0e7ff", color:"#4338ca"},
+  "#f59e0b": {bg:"#fef3c7", color:"#92400e"},
+  "#38bdf8": {bg:"#e0f2fe", color:"#0369a1"},
+  "#60a5fa": {bg:"#dbeafe", color:"#1d4ed8"},
+  "#71717a": {bg:"#f3f4f6", color:"#6b7280"},
+  "#27272a": {bg:"#f9fafb", color:"#6b7280"},
 };
 
 function buildMySchools() {
