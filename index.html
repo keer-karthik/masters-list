@@ -205,6 +205,51 @@
       .meta-grid { grid-template-columns:1fr; }
       .card-location { display:none; }
     }
+    .card-scholarship { background:#fff; border:1px solid #d1fae5; }
+    .badge-scholarship { background:#d1fae5; color:#065f46; }
+    .sch-partner { display:flex; gap:.5rem; align-items:baseline; padding:.25rem 0; border-bottom:1px solid #f3f4f6; }
+    .sch-partner:last-child { border-bottom:none; }
+    .sch-partner-school { font-size:.8rem; font-weight:600; color:#111827; }
+    .sch-partner-prog { font-size:.78rem; color:#6b7280; }
+    .card-deprioritized { opacity:.45; }
+    .deprioritized-divider { display:flex; align-items:center; gap:.75rem; margin:1.75rem 0 .75rem; color:#9ca3af; font-size:.68rem; letter-spacing:.07em; text-transform:uppercase; }
+    .deprioritized-divider::before, .deprioritized-divider::after { content:''; flex:1; height:1px; background:#e5e7eb; }
+
+    /* NL + US Companies */
+    .nl-legend { display:flex; gap:16px; font-size:12px; color:#555; margin-bottom:2rem; flex-wrap:wrap; }
+    .nl-legend span { display:flex; align-items:center; gap:5px; }
+    .nl-dot { width:9px; height:9px; border-radius:50%; display:inline-block; }
+    .nl-section-label { font-size:11px; font-weight:600; letter-spacing:.07em; text-transform:uppercase; color:#999; margin:2rem 0 .6rem; padding-bottom:.4rem; border-bottom:.5px solid #e8e8e8; }
+    .nl-grid { display:grid; grid-template-columns:repeat(auto-fill, minmax(200px, 1fr)); gap:8px; }
+    .nl-card { border:.5px solid #e2e2e2; border-radius:10px; padding:.8rem 1rem; background:#fff; transition:border-color .15s; }
+    .nl-card:hover { border-color:#bbb; }
+    .nl-card-top { display:flex; align-items:center; gap:9px; margin-bottom:5px; }
+    .nl-icon { width:28px; height:28px; border-radius:7px; display:flex; align-items:center; justify-content:center; font-size:14px; flex-shrink:0; }
+    .nl-name { font-size:13px; font-weight:500; margin:0; line-height:1.3; }
+    .nl-note { font-size:12px; color:#666; margin:0 0 6px; line-height:1.4; }
+    .nl-tags { display:flex; gap:5px; flex-wrap:wrap; }
+    .nl-tag { font-size:11px; padding:2px 7px; border-radius:5px; }
+    .nl-card.storage .nl-icon { background:#e1f5ee; }
+    .nl-card.storage .nl-tag-type { background:#e1f5ee; color:#085041; }
+    .nl-card.storage .nl-tag-l1 { background:#f0faf6; color:#1d9e75; }
+    .nl-card.analytics .nl-icon { background:#eeedfe; }
+    .nl-card.analytics .nl-tag-type { background:#eeedfe; color:#3c3489; }
+    .nl-card.analytics .nl-tag-l1 { background:#f5f4fe; color:#534ab7; }
+    .nl-card.utility .nl-icon { background:#faeeda; }
+    .nl-card.utility .nl-tag-type { background:#faeeda; color:#633806; }
+    .nl-card.utility .nl-tag-l1 { background:#fdf5e8; color:#854f0b; }
+    .nl-card.trading .nl-icon { background:#faece7; }
+    .nl-card.trading .nl-tag-type { background:#faece7; color:#712b13; }
+    .nl-card.trading .nl-tag-l1 { background:#fdf3f0; color:#993c1d; }
+    .nl-card.finance .nl-icon { background:#e6f1fb; }
+    .nl-card.finance .nl-tag-type { background:#e6f1fb; color:#0c447c; }
+    .nl-card.finance .nl-tag-l1 { background:#f0f7fe; color:#185fa5; }
+    .nl-card.policy .nl-icon { background:#f1efe8; }
+    .nl-card.policy .nl-tag-type { background:#f1efe8; color:#2c2c2a; }
+    .nl-card.policy .nl-tag-l1 { background:#f8f7f3; color:#5f5e5a; }
+    .nl-card.consulting .nl-icon { background:#fbeaf0; }
+    .nl-card.consulting .nl-tag-type { background:#fbeaf0; color:#4b1528; }
+    .nl-card.consulting .nl-tag-l1 { background:#fdf3f7; color:#993556; }
   </style>
 </head>
 <body>
@@ -252,6 +297,14 @@
     <div class="nav-divider"></div>
     <nav class="nav-section">
       <button class="nav-item" onclick="switchPrimary('research',this)">Research Groups</button>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-section">
+      <button class="nav-item" onclick="switchPrimary('scholarships',this)">Scholarships</button>
+    </nav>
+    <div class="nav-divider"></div>
+    <nav class="nav-section">
+      <button class="nav-item" onclick="switchPrimary('nl-companies',this)">NL + US Track</button>
     </nav>
   </aside>
 
@@ -344,6 +397,28 @@
     <div class="cards" id="research-list"></div>
   </div>
 
+  <!-- SCHOLARSHIPS -->
+  <div id="main-scholarships" class="main-panel">
+    <div class="panel-header">
+      <div class="panel-title">Scholarships &amp; Funding</div>
+      <div class="panel-desc">External scholarships that can fund a master's degree at zero or near-zero cost. Separate from RA/TA funding — these are competitive grants applied to directly, usually after receiving admission. Tracked here because the goal is to complete a master's for the least possible dollar outlay.</div>
+    </div>
+    <div class="cards" id="scholarships-list"></div>
+  </div>
+
+  <!-- NL + US COMPANIES -->
+  <div id="main-nl-companies" class="main-panel">
+    <div class="panel-header">
+      <div class="panel-title">Target Companies — NL + US Presence</div>
+      <div class="panel-desc">Companies with confirmed offices in both the Netherlands and the United States. Relevant for an L-1 intracompany transfer path: join the NL office first, then transfer to the US after 12+ months. <strong style="color:#1d9e75;">Green = strong L-1 fit</strong> based on role alignment with energy quant / power market analyst profile.</div>
+    </div>
+    <div class="nl-legend">
+      <span><span class="nl-dot" style="background:#1d9e75;"></span>Strong L-1 fit</span>
+      <span><span class="nl-dot" style="background:#999;"></span>NL + US offices confirmed</span>
+    </div>
+    <div id="nl-companies-list"></div>
+  </div>
+
   </main>
 </div>
 </div>
@@ -355,15 +430,16 @@ const tagClasses = ["tag-0","tag-1","tag-2","tag-3","tag-4"];
 const energyEconPrograms = [
   // Tier 1
   {tier:1,school:"Rice University",program:"Master of Energy Economics (MEECON)",location:"Houston, TX",duration:"12 months",focus:"Energy markets, asset decisions, capital allocation, market forecasting",why:"Best single fit for energy markets analyst roles. Houston proximity gives direct access to Wood Mac, Shell, ExxonMobil, and trading firm recruiting. Highly respected in the field. Note: professional master's — RA funding uncommon but not impossible if you identify a faculty research project before applying.",tags:["Energy Economics","Markets","Quantitative"]},
-  {tier:1,school:"★ Colorado School of Mines",program:"MS in Mineral and Energy Economics",location:"Golden, CO",duration:"~18–24 months",focus:"Price forecasting, asset valuation, utility regulation, renewables, environmental economics",why:"Consistent feeder into Wood Mac and energy consulting. Strong quant training pairs well with Python and optimization work. RA FUNDING CONFIRMED: appointments at 0.25 FTE or above receive full tuition remission. Stipend is $28,500/year (9-month, 2025-26). Contact faculty before applying to negotiate an appointment.",tags:["Energy Economics","Forecasting","★ RA Funding Confirmed","Quantitative"]},
+  {deprioritized:true,tier:1,school:"★ Colorado School of Mines",program:"MS in Mineral and Energy Economics",location:"Golden, CO",duration:"~18–24 months",focus:"Price forecasting, asset valuation, utility regulation, renewables, environmental economics",why:"Consistent feeder into Wood Mac and energy consulting. Strong quant training pairs well with Python and optimization work. RA FUNDING CONFIRMED: appointments at 0.25 FTE or above receive full tuition remission. Stipend is $28,500/year (9-month, 2025-26). Contact faculty before applying to negotiate an appointment.",tags:["Energy Economics","Forecasting","★ RA Funding Confirmed","Quantitative"]},
   {tier:1,school:"★ UT Austin",program:"MS Economics / McCombs Energy Management",location:"Austin, TX",duration:"~18 months",focus:"Energy markets, ERCOT exposure, cleantech analytics, power market fundamentals",why:"Strong ties to ERCOT, Texas PUC, and cleantech firms. Aurora has an Austin graduate analyst program. RA FUNDING CONFIRMED: non-resident students employed half-time as TA/GRA receive the Resident Tuition Entitlement — waiver of out-of-state portion, charged in-state tuition. GRAs also eligible for the tax-exempt Tuition Reduction Benefit. LBJ School and Cockrell Engineering are the most active departments for RA placements.",tags:["Power Markets","★ RA Funding Confirmed","Energy Finance","Policy"]},
-  {tier:1,school:"University of Houston — Bauer",program:"MS in Global Energy Leadership / MS Finance (Energy specialization)",location:"Houston, TX",duration:"18–22 months",focus:"Energy management, energy finance, trading, derivatives, energy risk management",why:"Houston location is unmatched for energy industry access. Gutierrez Energy Management Institute (GEMI) is purpose-built for energy business education with industry executives teaching core courses. MS Finance students can specialize entirely in energy finance including derivatives and risk management.",tags:["Energy Finance","Houston","Industry Access","Risk"]},
+  {deprioritized:true,tier:1,school:"University of Houston — Bauer",program:"MS in Global Energy Leadership / MS Finance (Energy specialization)",location:"Houston, TX",duration:"18–22 months",focus:"Energy management, energy finance, trading, derivatives, energy risk management",why:"Houston location is unmatched for energy industry access. Gutierrez Energy Management Institute (GEMI) is purpose-built for energy business education with industry executives teaching core courses. MS Finance students can specialize entirely in energy finance including derivatives and risk management.",tags:["Energy Finance","Houston","Industry Access","Risk"]},
   // Tier 2
-  {tier:2,school:"Columbia University",program:"MPA/MIA — Climate, Energy & Environment (SIPA)",location:"New York, NY",duration:"2 years",focus:"Energy policy, markets, finance, regulatory strategy",why:"Strong brand and network, especially for roles with any policy interface (Tesla Energy, BloombergNEF, consulting). Center on Global Energy Policy hosts practitioners constantly and connects students directly to energy industry leadership.",tags:["Policy","Energy Markets","Network"]},
+  {tier:2,school:"Columbia University — SIPA",program:"MPA/MIA — Climate, Energy & Environment (SIPA)",location:"New York, NY",duration:"2 years",focus:"Energy policy, markets, finance, regulatory strategy",why:"Strong brand and network, especially for roles with any policy interface (Tesla Energy, BloombergNEF, consulting). Center on Global Energy Policy hosts practitioners constantly and connects students directly to energy industry leadership. JJ/WBGSP SCHOLARSHIP ELIGIBLE: Columbia SIPA MPA is a World Bank JJ/WBGSP partner program. Full tuition + monthly living allowance + travel. Apply to World Bank separately after admission. Open to nationals of World Bank member countries with 3+ years professional work experience.",tags:["Policy","Energy Markets","Network","★ JJ/WBGSP Eligible"]},
+  {tier:2,school:"Columbia University — SIPA",program:"MPA in Economic Policy Management (MPA-EPM)",location:"New York, NY",duration:"12 months (intensive cohort, Jan or Aug start)",focus:"Macroeconomics, econometrics, fiscal and monetary policy, development economics, quantitative policy analysis — designed for mid-career professionals",why:"Intensive 12-month cohort program specifically designed for professionals already working in government, development, or the private sector. Stronger quantitative policy focus than the 2-year MPA/MIA — more comparable to a terminal master's in economics but with a development and macro lens. CGEP and the broader SIPA network still accessible. JJ/WBGSP SCHOLARSHIP ELIGIBLE: MPA-EPM is an explicit partner program on the World Bank's list. This is one of the strongest paths to World Bank/IMF/development bank analyst roles while keeping energy markets open through CGEP.",tags:["Quant Policy","Development Economics","12 Months","★ JJ/WBGSP Eligible","SIPA","Intensive Cohort"]},
   {tier:2,school:"NYU SPS — Center for Global Affairs",program:"MS in Sustainability and Global Energy Practice",location:"New York, NY",duration:"~18–24 months",focus:"Global energy systems, sustainability management, energy policy, regulatory compliance, risk analytics, energy security — practitioner-oriented curriculum",why:"NYU's most directly energy-relevant graduate program. Covers energy policy, regulatory frameworks, global energy systems, and sustainability risk analytics. NYU is not a humanities school at the graduate level — this is a practitioner-oriented program taught by professionals actively working in energy and sustainability. NYC location gives access to NY Green Bank, Con Edison, grid operators, and the city's growing climate finance sector. Wagner MPA grads have gone directly into NY Green Bank renewable energy roles. No dedicated energy markets concentration, but valuable for policy-adjacent roles.",tags:["Energy Policy","NYC","Sustainability","Global Energy","Practitioner"]},
   {tier:2,school:"University of Maryland",program:"MS in Applied Economics (Energy focus)",location:"College Park, MD",duration:"~18 months",focus:"Econometrics, energy market modeling, environmental economics",why:"Underrated for this path. DC proximity means access to FERC, EIA, and consulting shops. More affordable than most on this list with strong quant training. Good for regulatory economics and energy policy roles in government or consulting.",tags:["Applied Economics","Econometrics","DC Access"]},
   {tier:2,school:"Johns Hopkins University",program:"MS in Energy Policy and Climate",location:"Washington, DC (also online)",duration:"Flexible (online option)",focus:"Renewable energy finance, grid integration, regulatory frameworks, energy law",why:"Good optionality toward utility and regulatory side of energy markets. Can be done online or part-time while working. Tesla energy analysts with JHU backgrounds visible on LinkedIn.",tags:["Energy Policy","Regulation","Flexible"]},
-  {tier:2,school:"SMU Cox — Maguire Energy Institute",program:"MS in Energy and Sustainability (MSES)",location:"Dallas, TX",duration:"~12 months",focus:"Energy and sustainability management with tracks in Accounting, Finance, or Operations",why:"Launched fall 2025 — brand new program from the Maguire Energy Institute, one of the oldest energy business education programs in the US (50 years). Finance track is the most relevant for markets analyst roles. Dallas is a growing energy hub and cost of living is more manageable than Houston.",tags:["Energy Finance","Sustainability","Dallas","New Program"]},
+  {deprioritized:true,tier:2,school:"SMU Cox — Maguire Energy Institute",program:"MS in Energy and Sustainability (MSES)",location:"Dallas, TX",duration:"~12 months",focus:"Energy and sustainability management with tracks in Accounting, Finance, or Operations",why:"Launched fall 2025 — brand new program from the Maguire Energy Institute, one of the oldest energy business education programs in the US (50 years). Finance track is the most relevant for markets analyst roles. Dallas is a growing energy hub and cost of living is more manageable than Houston.",tags:["Energy Finance","Sustainability","Dallas","New Program"]},
   {tier:2,school:"★ Texas A&M University",program:"MS in Energy (Texas A&M Energy Institute)",location:"College Station, TX",duration:"As little as 10 months",focus:"Energy economics, energy systems engineering, energy law and policy, sustainability",why:"Broad interdisciplinary program leveraging the A&M Energy Institute and access to one of the world's largest alumni networks. RA FUNDING POSSIBLE: public flagship with research-active energy faculty. RA positions available especially in engineering and energy policy departments. Good cost-to-value ratio.",tags:["Energy Systems","Policy","★ RA Possible","Aggie Network","Affordable"]},
   // Tier 3
   {tier:3,school:"★ Georgia Tech — Carter School",program:"MS in Sustainable Energy and Environmental Management (MSEEM)",location:"Atlanta, GA",duration:"1 year (full-time) or 2 years (part-time)",focus:"Energy market regulation, carbon credits, green energy financing, data analytics, environmental law and policy",why:"Multidisciplinary program combining engineering, business, public policy, and economics. RA FUNDING CONFIRMED: full tuition waivers accompany all RA/TA positions requiring one-third to one-half time work. Minimum stipend $1,184/month for master's students (2025-26 policy). Atlanta is a growing energy and cleantech hub.",tags:["Interdisciplinary","Utility Regulation","★ RA Funding Confirmed","Georgia Tech"]},
@@ -393,8 +469,8 @@ const financePrograms = [
   {badge:"MA",school:"Columbia University",program:"MA in Economics / MS in Financial Economics",location:"New York, NY",duration:"12–18 months",focus:"Microeconomics, econometrics, quantitative methods, financial theory",why:"Good brand for finance/markets transition, especially paired with Columbia's energy policy network at SIPA and CGEP. New York location provides access to commodity trading firms, energy investment banks, and BloombergNEF.",tags:["Economics","Quantitative","NYC Network"]},
   {badge:"⚠️",school:"UC Berkeley — Economics",program:"No MS in Economics — PhD only",location:"Berkeley, CA",duration:"N/A",focus:"Berkeley's Economics Department explicitly states it does not offer a terminal master's degree. All admissions are for the PhD program only.",why:"Worth flagging because Berkeley's brand leads many applicants to assume an MS in Econ exists here. It does not. If you want a Berkeley economics credential the options are the PhD (not a professional degree) or the online MIDS data science program. For an energy-focused applied economics degree in California, look at UC Davis MA in Economics or the Berkeley ERG MS instead.",tags:["⚠️ No MS Econ","Berkeley","Clarification"]},
   {badge:"MA",school:"UC Davis",program:"MA in Economics (Applied focus)",location:"Davis, CA",duration:"~18 months",focus:"Applied microeconomics, environmental and resource economics, energy policy, econometrics",why:"A genuine alternative to the nonexistent Berkeley MS in Econ. UC Davis has a respected applied economics program with faculty specializing in energy and environmental economics. Lower cost than private alternatives and accessible from the Bay Area. Good for regulatory analysis and energy policy roles.",tags:["Applied Economics","Environmental","California","Accessible"]},
-  {badge:"MS",school:"SMU Cox",program:"MS Finance — Energy Finance Specialization",location:"Dallas, TX",duration:"~12 months",focus:"Energy risk management, energy derivatives, energy project management, Bloomberg trading simulation",why:"One of the few MS Finance programs with a dedicated energy finance specialization built around the Maguire Energy Institute. Courses cover energy derivatives and risk management specifically. Dallas proximity to energy firms and lower cost of living than Houston or NYC.",tags:["Energy Finance","Derivatives","Dallas","Accessible"]},
-  {badge:"MS",school:"University of Houston — Bauer",program:"MS Finance — Energy Finance Specialization",location:"Houston, TX",duration:"18–22 months",focus:"Energy economics, energy trading, energy derivatives, risk management — taught by industry executives",why:"One of the strongest energy finance programs outside of a dedicated energy school. GEMI-backed curriculum with senior energy industry executives as instructors. Houston location means recruiting connections are local. STEM-designated.",tags:["Energy Finance","Houston","Trading","Risk Management"]},
+  {deprioritized:true,badge:"MS",school:"SMU Cox",program:"MS Finance — Energy Finance Specialization",location:"Dallas, TX",duration:"~12 months",focus:"Energy risk management, energy derivatives, energy project management, Bloomberg trading simulation",why:"One of the few MS Finance programs with a dedicated energy finance specialization built around the Maguire Energy Institute. Courses cover energy derivatives and risk management specifically. Dallas proximity to energy firms and lower cost of living than Houston or NYC.",tags:["Energy Finance","Derivatives","Dallas","Accessible"]},
+  {deprioritized:true,badge:"MS",school:"University of Houston — Bauer",program:"MS Finance — Energy Finance Specialization",location:"Houston, TX",duration:"18–22 months",focus:"Energy economics, energy trading, energy derivatives, risk management — taught by industry executives",why:"One of the strongest energy finance programs outside of a dedicated energy school. GEMI-backed curriculum with senior energy industry executives as instructors. Houston location means recruiting connections are local. STEM-designated.",tags:["Energy Finance","Houston","Trading","Risk Management"]},
   {badge:"MA",school:"Tufts University",program:"MA in Economics (strong energy/environmental economics faculty)",location:"Medford, MA",duration:"~18 months",focus:"Applied econometrics, environmental and energy economics, policy analysis",why:"Tufts has a respected economics faculty with strong environmental and energy economics focus. DC and Boston connections are useful for regulatory and consulting roles. More accessible than Chicago or Columbia while still analytically rigorous.",tags:["Applied Economics","Environmental","Boston","Accessible"]},
   {badge:"MS",school:"Vanderbilt University",program:"MS in Finance (Owen Graduate School)",location:"Nashville, TN",duration:"12 months",focus:"Corporate finance, financial modeling, investments, energy finance electives",why:"Solid MS Finance program with good placement in finance roles. Accessible for applicants with lower GPAs who have strong work experience. Owen has regional energy ties and a reasonable cost structure compared to coastal programs.",tags:["Finance","Modeling","Accessible","South"]},
   {badge:"MSF",school:"UT Austin — McCombs",program:"MS in Finance (MSF)",location:"Austin, TX",duration:"10 months (July start)",focus:"Core finance theory, financial modeling, derivatives, investments, data analytics — spring electives allow specialization including energy finance. Practicum with sponsoring companies in second half of program.",why:"A strong, STEM-designated MS Finance from a top-15 public business school in the heart of Austin's energy market. The practicum places students directly with companies on live finance problems — students can indicate energy as an area of interest. GRE/GMAT optional, and test waivers available for applicants with strong quant backgrounds. The Kay Bailey Hutchison Energy Center and McCombs energy finance electives make this more energy-relevant than a typical MS Finance. F1-friendly — qualifies for 3 years of OPT via STEM extension. Tuition is $54K in-state, $58K out-of-state.",tags:["MSF","STEM OPT","Energy Finance","Austin","Practicum","GRE Optional"]},
@@ -408,7 +484,7 @@ const mbaPrograms = [
   {badge:"MBA",school:"Northwestern — Kellogg",program:"MBA — Sustainability, Climate, Energy & Environment Pathway",location:"Evanston, IL",duration:"2 years",focus:"Economics and strategy of energy markets, corporate sustainability, sustainable investing",why:"Strong top-10 MBA with energy pathway. Paired with the MSES program, Kellogg has one of the richest energy ecosystems at a top MBA. Good for roles blending strategy and markets at Tesla Energy or energy strategy consulting.",tags:["MBA","Energy Strategy","Sustainability","Top-10"]},
   {badge:"MBA",school:"Duke University — Fuqua",program:"MBA — Energy & Environment (EDGE Center)",location:"Durham, NC",duration:"2 years",focus:"Renewable energy, energy markets and policy, environmental sustainability, sustainable finance",why:"Fuqua's Center for Energy, Development and the Global Environment (EDGE) includes courses in Energy Markets and Policy plus Renewable Energy and Sustainable Technologies. Places well into energy consulting and transition finance.",tags:["MBA","Energy Markets","Policy","Fuqua"]},
   {badge:"MBA",school:"Texas A&M — Mays",program:"MBA — Energy Certificate / Energy Sector Recruiting",location:"College Station, TX",duration:"2 years",focus:"Energy sector leadership, certificate in energy via Texas A&M Energy Institute, Aggie Network",why:"Not a formal concentration but Mays MBA students have the Texas A&M Energy Institute on campus and one of the world's most active alumni networks in the energy sector. ~13% of MBA graduates enter energy roles. Strong placement at Phillips 66, ConocoPhillips, and similar firms. Lower cost than private school peers.",tags:["MBA","Energy","Aggie Network","Affordable"]},
-  {badge:"MBA",school:"SMU Cox — Maguire Energy Institute",program:"MBA — Energy Finance Concentration",location:"Dallas, TX",duration:"2 years",focus:"Energy risk management, energy project management, trading, ESG and sustainability — backed by 50-year-old Maguire Energy Institute",why:"Strong regional energy MBA with Maguire Energy Institute support. Dallas location is growing in energy relevance. Energy finance concentration and certificate programs available within the MBA. Good value compared to Houston peers.",tags:["MBA","Energy Finance","Dallas","Maguire Institute"]},
+  {deprioritized:true,badge:"MBA",school:"SMU Cox — Maguire Energy Institute",program:"MBA — Energy Finance Concentration",location:"Dallas, TX",duration:"2 years",focus:"Energy risk management, energy project management, trading, ESG and sustainability — backed by 50-year-old Maguire Energy Institute",why:"Strong regional energy MBA with Maguire Energy Institute support. Dallas location is growing in energy relevance. Energy finance concentration and certificate programs available within the MBA. Good value compared to Houston peers.",tags:["MBA","Energy Finance","Dallas","Maguire Institute"]},
   {badge:"MBA",school:"Harvard Business School",program:"MBA — Energy & Environment Track",location:"Boston, MA",duration:"2 years",focus:"Strategy, finance, policy — energy/environment is a field track, not a formal concentration",why:"No formal energy specialization but strong energy-adjacent coursework and alumni in senior energy roles. The brand opens every door. Best if you want investment, development finance, or senior strategy — less ideal for pure markets analytics entry-level work.",tags:["MBA","Brand","Strategy","Selective"]},
   {badge:"MBA",school:"UC Berkeley — Haas",program:"MBA — Energy Institute / Sustainable Business",location:"Berkeley, CA",duration:"2 years",focus:"Clean energy, sustainable finance, energy markets, technology commercialization — Energy Institute at Haas",why:"Strong clean energy and sustainability focus. Energy Institute at Haas runs active research and networking with NextEra, PG&E, and cleantech investors. Bay Area is best-in-class for cleantech VC and energy storage startup recruiting.",tags:["MBA","Clean Energy","Sustainable Finance","Bay Area"]},
   {badge:"MBA",school:"UNC Kenan-Flagler",program:"MBA — Energy Concentration",location:"Chapel Hill, NC",duration:"2 years",focus:"Full energy spectrum: renewables, oil, power markets — Energy Center research. Energy Club.",why:"One of the few MBA programs with an explicit energy concentration that covers both traditional and clean energy. Kenan-Flagler's Energy Center produces applied research and connects students to industry. Good cost-to-value ratio at a public university.",tags:["MBA","Energy","Renewables+Oil","UNC"]},
@@ -565,10 +641,22 @@ function makeProgramCard(p, cardClass, id) {
 
 function buildGroup(data, containerId, getClass) {
   const container = document.getElementById(containerId);
-  data.forEach((p,i) => {
-    const id = `${containerId}-${i}`;
-    container.appendChild(makeProgramCard(p, getClass(p), id));
+  const main = data.filter(p => !p.deprioritized);
+  const deprior = data.filter(p => p.deprioritized);
+  main.forEach((p,i) => {
+    container.appendChild(makeProgramCard(p, getClass(p), `${containerId}-${i}`));
   });
+  if (deprior.length > 0) {
+    const div = document.createElement('div');
+    div.className = 'deprioritized-divider';
+    div.innerHTML = '<span>Lower priority</span>';
+    container.appendChild(div);
+    deprior.forEach((p,i) => {
+      const card = makeProgramCard(p, getClass(p), `${containerId}-dp-${i}`);
+      card.classList.add('card-deprioritized');
+      container.appendChild(card);
+    });
+  }
 }
 
 function buildCompanies() {
@@ -955,6 +1043,154 @@ function buildResearch() {
   });
 }
 
+/* ─── NL + US COMPANIES ─── */
+const nlCompanySectors = [
+  {id:"storage",label:"Energy Storage",companies:[
+    {icon:"⚡",name:"Fluence",note:"BESS systems + Mosaic dispatch software. Amsterdam + Arlington VA.",tags:[{t:"Storage + software",c:"nl-tag-type"},{t:"Strong L-1 fit",c:"nl-tag-l1"}]},
+    {icon:"🔋",name:"Wärtsilä Energy",note:"GEMS optimization platform, grid-scale BESS. Drunen NL + 9 US locations.",tags:[{t:"Storage + software",c:"nl-tag-type"},{t:"Strong L-1 fit",c:"nl-tag-l1"}]},
+    {icon:"🚗",name:"Tesla Energy",note:"Megapack, Powerwall, grid services. Amsterdam + multiple US offices.",tags:[{t:"Storage hardware",c:"nl-tag-type"}]},
+    {icon:"🔌",name:"Siemens Energy",note:"Grid infrastructure, storage controls, inverters.",tags:[{t:"Infrastructure",c:"nl-tag-type"}]},
+    {icon:"⚙️",name:"GE Vernova",note:"Grid solutions, electrification, storage software stack.",tags:[{t:"Infrastructure",c:"nl-tag-type"}]},
+    {icon:"🌊",name:"Vattenfall",note:"Swedish utility, large NL operations, growing BESS portfolio.",tags:[{t:"Utility + storage",c:"nl-tag-type"}]},
+  ]},
+  {id:"analytics",label:"Energy Analytics & Market Intelligence",companies:[
+    {icon:"📈",name:"Aurora Energy Research",note:"Power market forecasting, BESS valuation, AMUN/ORIGIN software.",tags:[{t:"Market analytics",c:"nl-tag-type"},{t:"Strong L-1 fit",c:"nl-tag-l1"}]},
+    {icon:"📊",name:"BloombergNEF",note:"Storage economics, energy transition data, sector forecasting.",tags:[{t:"Market analytics",c:"nl-tag-type"},{t:"Strong L-1 fit",c:"nl-tag-l1"}]},
+    {icon:"📉",name:"S&P Global Commodity Insights",note:"Commodity analytics, power market data, Platts.",tags:[{t:"Market analytics",c:"nl-tag-type"},{t:"Strong L-1 fit",c:"nl-tag-l1"}]},
+    {icon:"🏢",name:"Wood Mackenzie",note:"Energy research, storage forecasting, asset valuation.",tags:[{t:"Market analytics",c:"nl-tag-type"},{t:"Strong L-1 fit",c:"nl-tag-l1"}]},
+    {icon:"🔍",name:"ICIS",note:"Rotterdam HQ, commodity and energy market pricing data.",tags:[{t:"Market data",c:"nl-tag-type"}]},
+    {icon:"📡",name:"Platts Analytics (S&P)",note:"Power and gas market analytics arm of S&P Global.",tags:[{t:"Market data",c:"nl-tag-type"}]},
+  ]},
+  {id:"utility",label:"Energy Utilities & IPPs",companies:[
+    {icon:"💧",name:"Statkraft",note:"Renewables, flexibility trading, European balancing markets.",tags:[{t:"Utility + trading",c:"nl-tag-type"}]},
+    {icon:"🔥",name:"EDF Trading",note:"Power and gas trading, storage optimization, structured products.",tags:[{t:"Trading + utility",c:"nl-tag-type"}]},
+    {icon:"🌍",name:"ENGIE",note:"Renewables, BESS, flexibility markets, large NL operations.",tags:[{t:"Utility + storage",c:"nl-tag-type"}]},
+    {icon:"🏔️",name:"Axpo",note:"Swiss utility, active power trader in NL and US markets.",tags:[{t:"Trading + utility",c:"nl-tag-type"}]},
+    {icon:"🌬️",name:"RWE",note:"German utility, building first BESS in NL, US renewables arm.",tags:[{t:"Utility + storage",c:"nl-tag-type"}]},
+    {icon:"☀️",name:"TotalEnergies",note:"French energy major with large NL and US renewables + storage portfolio.",tags:[{t:"Utility + storage",c:"nl-tag-type"}]},
+    {icon:"⚡",name:"Equinor",note:"Norwegian energy major, growing BESS and offshore wind in NL + US.",tags:[{t:"Utility + storage",c:"nl-tag-type"}]},
+  ]},
+  {id:"trading",label:"Energy Trading (Commodities)",companies:[
+    {icon:"↔️",name:"Vitol",note:"Founded Rotterdam 1966. Houston and Stamford offices. Power + gas + LNG.",tags:[{t:"Commodities",c:"nl-tag-type"}]},
+    {icon:"↔️",name:"Trafigura",note:"Rotterdam presence, US offices, power and gas trading arm.",tags:[{t:"Commodities",c:"nl-tag-type"}]},
+    {icon:"↔️",name:"Gunvor",note:"Houston + Stamford offices, Nyera renewables investment arm.",tags:[{t:"Commodities",c:"nl-tag-type"}]},
+    {icon:"📋",name:"ENGIE Global Markets",note:"Power and gas trading platform, NL + US operations.",tags:[{t:"Power trading",c:"nl-tag-type"}]},
+    {icon:"🏭",name:"Mercuria",note:"Geneva-HQ commodity trader, growing power and LNG book, NL + US offices.",tags:[{t:"Commodities",c:"nl-tag-type"}]},
+    {icon:"🔁",name:"Castleton Commodities",note:"Stamford-based trader with European operations including NL.",tags:[{t:"Power trading",c:"nl-tag-type"}]},
+  ]},
+  {id:"finance",label:"Project Finance & Infrastructure Investment",companies:[
+    {icon:"🏦",name:"Macquarie Asset Management",note:"Amsterdam + US offices. Energy transition infrastructure fund, BESS investments.",tags:[{t:"Infra PE",c:"nl-tag-type"}]},
+    {icon:"🌿",name:"Brookfield Renewable",note:"Amsterdam regional center, ~€3B AUM in NL, large US renewables + storage platform.",tags:[{t:"Infra PE",c:"nl-tag-type"}]},
+    {icon:"⬛",name:"BlackRock",note:"BlackRock NL B.V. in Amsterdam, major energy infra investor globally.",tags:[{t:"Asset management",c:"nl-tag-type"}]},
+    {icon:"🏗️",name:"ING Bank (Energy Finance)",note:"Amsterdam HQ, large energy project finance desk, US operations.",tags:[{t:"Project finance",c:"nl-tag-type"}]},
+    {icon:"💼",name:"ABN AMRO (Energy)",note:"Amsterdam HQ, energy transition finance, US correspondent relationships.",tags:[{t:"Project finance",c:"nl-tag-type"}]},
+  ]},
+  {id:"policy",label:"Policy, International Organizations & Think Tanks",companies:[
+    {icon:"🌐",name:"World Bank Group (IFC / ESMAP)",note:"Washington DC HQ + global. Energy storage, grid modernization, developing markets. ESMAP is the energy arm.",tags:[{t:"MDB / policy",c:"nl-tag-type"}]},
+    {icon:"🏛️",name:"IEA",note:"Paris HQ, Amsterdam liaison office. Battery storage and power market work.",tags:[{t:"Intergovernmental",c:"nl-tag-type"}]},
+    {icon:"☀️",name:"IRENA",note:"Abu Dhabi HQ. Netherlands is a founding member. Renewables and storage policy.",tags:[{t:"Intergovernmental",c:"nl-tag-type"}]},
+    {icon:"🏦",name:"EBRD",note:"London HQ, NL shareholder, energy transition finance across Europe and emerging markets.",tags:[{t:"MDB",c:"nl-tag-type"}]},
+    {icon:"🔬",name:"RMI (Rocky Mountain Institute)",note:"US nonprofit, active in 50+ countries, power sector decarbonization and storage.",tags:[{t:"Think tank",c:"nl-tag-type"}]},
+    {icon:"🌍",name:"Energy Charter Secretariat",note:"Brussels-based, but NL is a key member. Energy investment treaty framework.",tags:[{t:"Policy",c:"nl-tag-type"}]},
+  ]},
+  {id:"consulting",label:"Strategy Consulting (Energy Practice)",companies:[
+    {icon:"📐",name:"McKinsey (Energy & Materials)",note:"Amsterdam + multiple US offices. Energy transition, grid modernization practice.",tags:[{t:"Consulting",c:"nl-tag-type"}]},
+    {icon:"🔎",name:"Oliver Wyman (Energy)",note:"Amsterdam + US offices. Energy strategy, utilities, storage economics.",tags:[{t:"Consulting",c:"nl-tag-type"}]},
+    {icon:"📐",name:"BCG (Climate & Energy)",note:"Amsterdam + multiple US offices. Energy transition strategy practice.",tags:[{t:"Consulting",c:"nl-tag-type"}]},
+    {icon:"🌱",name:"Guidehouse",note:"US-based energy consultancy, European operations including NL. BESS and grid work.",tags:[{t:"Energy consulting",c:"nl-tag-type"}]},
+    {icon:"📊",name:"Navigant / Guidehouse Energy",note:"Now part of Guidehouse. Regulatory and market design practice.",tags:[{t:"Energy consulting",c:"nl-tag-type"}]},
+  ]},
+];
+
+function buildNLCompanies() {
+  const container = document.getElementById('nl-companies-list');
+  nlCompanySectors.forEach(sector => {
+    const label = document.createElement('div');
+    label.className = 'nl-section-label';
+    label.textContent = sector.label;
+    container.appendChild(label);
+    const grid = document.createElement('div');
+    grid.className = 'nl-grid';
+    sector.companies.forEach(co => {
+      const tagsHTML = co.tags.map(tag => `<span class="nl-tag ${tag.c}">${tag.t}</span>`).join('');
+      const card = document.createElement('div');
+      card.className = `nl-card ${sector.id}`;
+      card.innerHTML = `
+        <div class="nl-card-top">
+          <div class="nl-icon">${co.icon}</div>
+          <p class="nl-name">${co.name}</p>
+        </div>
+        <p class="nl-note">${co.note}</p>
+        <div class="nl-tags">${tagsHTML}</div>`;
+      grid.appendChild(card);
+    });
+    container.appendChild(grid);
+  });
+}
+
+/* ─── SCHOLARSHIPS ─── */
+const scholarships = [
+  {
+    id:"jj-wbgsp",
+    name:"World Bank JJ/WBGSP Scholarship",
+    provider:"Joint Japan/World Bank Graduate Scholarship Program",
+    coverage:"Full tuition + monthly living allowance (~$1,500–2,000 USD) + travel allowance (economy class, round trip)",
+    deadline:"Varies by program — typically February–April for fall start; applications open December",
+    eligibility:"Nationals of World Bank member countries (not Japan or USA). Minimum 3 years of professional work experience in a development-related field. Must have an admission offer from a partner program. Under 45 years old at application.",
+    note:"This is not applied through the university — you apply directly to the World Bank after receiving admission. Extremely competitive (~5% acceptance). Strongest applications show clear development impact and intent to return to work on development challenges.",
+    partnerPrograms:[
+      {school:"Columbia University — SIPA", program:"MPA in Economic Policy Management (MPA-EPM)"},
+      {school:"Columbia University — SIPA", program:"MPA/MIA — Climate, Energy & Environment"},
+    ],
+    tags:["Full Funding","World Bank","Development","Competitive"],
+  }
+];
+
+function buildScholarships() {
+  const container = document.getElementById('scholarships-list');
+  scholarships.forEach(s => {
+    const id = 'sch-' + s.id;
+    const partnerHTML = s.partnerPrograms.map(p =>
+      `<div class="sch-partner">
+        <span class="sch-partner-school">${p.school}</span>
+        <span class="sch-partner-prog">${p.program}</span>
+      </div>`
+    ).join('');
+    const tagsHTML = s.tags.map((t,j) =>
+      `<span class="tag ${tagClasses[j%5]}">${t}</span>`
+    ).join('');
+    const card = document.createElement('div');
+    card.className = 'card card-scholarship';
+    card.innerHTML = `
+      <div class="card-header" onclick="toggleCard('${id}')">
+        <div class="card-left">
+          <span class="card-badge badge-scholarship">Grant</span>
+          <div class="card-titles">
+            <div class="card-school">${s.name}</div>
+            <div class="card-program">${s.provider}</div>
+          </div>
+        </div>
+        <span class="toggle-icon" id="icon-${id}">+</span>
+      </div>
+      <div class="card-body" id="${id}">
+        <div class="meta-grid">
+          <div class="meta-item"><div class="meta-label">Coverage</div><div class="meta-value">${s.coverage}</div></div>
+          <div class="meta-item"><div class="meta-label">Application Deadline</div><div class="meta-value">${s.deadline}</div></div>
+        </div>
+        <div class="meta-grid" style="margin-top:.5rem;">
+          <div class="meta-item" style="grid-column:1/-1"><div class="meta-label">Eligibility</div><div class="meta-value">${s.eligibility}</div></div>
+        </div>
+        <div class="why-block" style="margin-top:.75rem;">${s.note}</div>
+        <div style="margin-top:.75rem;">
+          <div class="meta-label" style="margin-bottom:.4rem;">Partner Programs on This Site</div>
+          ${partnerHTML}
+        </div>
+        <div class="tags">${tagsHTML}</div>
+      </div>`;
+    container.appendChild(card);
+  });
+}
+
 // Init
 buildGroup(energyEconPrograms, 'energy-econ-list', p => `tier-${p.tier}`);
 buildGroup(techPrograms,        'tech-list',        () => 'card-tech');
@@ -965,6 +1201,8 @@ buildCompanies();
 buildStartups();
 buildDS();
 buildResearch();
+buildScholarships();
+buildNLCompanies();
 
 /* ─── MY SCHOOLS ─── */
 const mySchools = [
@@ -1006,7 +1244,8 @@ const mySchools = [
     name:"Columbia University",
     location:"New York, NY",
     programs:[
-      {badge:"MPA",   color:"#38bdf8", tab:"Energy Econ & Policy (T2)", name:"MPA/MIA — Climate, Energy & Environment (SIPA)",         note:"2 years, CGEP network, NYC energy market access, policy + markets"},
+      {badge:"MPA",   color:"#38bdf8", tab:"Energy Econ & Policy (T2)", name:"MPA/MIA — Climate, Energy & Environment (SIPA)",         note:"2 years, CGEP network, NYC energy market access, policy + markets, ★ JJ/WBGSP eligible"},
+      {badge:"MPA-EPM",color:"#38bdf8",tab:"Energy Econ & Policy (T2)", name:"MPA in Economic Policy Management (MPA-EPM)",            note:"12 months, ★ JJ/WBGSP eligible, quant policy focus, Jan or Aug start"},
       {badge:"MA",    color:"#a78bfa", tab:"Finance & Economics",       name:"MA in Economics / MS in Financial Economics",            note:"12–18 months, quant econ, NYC commodity trading access"},
       {badge:"MS",    color:"#60a5fa", tab:"Data Science Programs",     name:"MS in Data Science",                                    note:"18 months, joint program across departments, capstone, GRE optional"},
       {badge:"JD/MBA",color:"#4ade80", tab:"Dual Degrees",              name:"Three-Year JD/MBA (Law + CBS)",                         note:"3 years accelerated, NYC energy law + finance, SIPA/CGEP network"},
