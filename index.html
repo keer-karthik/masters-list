@@ -109,6 +109,11 @@
     .main-panel.active { display:block; }
     .prog-panel { display:none; }
     .prog-panel.active { display:block; }
+    .comp-panel { display:none; }
+    .comp-panel.active { display:block; }
+    .nav-comp-sub { display:block; padding:.3rem 1.2rem .3rem 1.8rem; font-size:12px; color:#6b7280; cursor:pointer; background:none; border:none; border-left:2px solid transparent; text-align:left; width:100%; }
+    .nav-comp-sub:hover { color:#374151; }
+    .nav-comp-sub.active { color:#d97706; border-left-color:#d97706; font-weight:500; }
 
     /* ── PANEL HEADERS ── */
     .panel-header { margin-bottom:1.4rem; }
@@ -200,6 +205,8 @@
       .nav-item.active { color:#d97706; border-bottom-color:#d97706; border-left:none; }
       .nav-sub { padding:.4rem .65rem; border-left:none; border-bottom:2px solid transparent; font-size:.6rem; }
       .nav-sub.active { color:#d97706; border-bottom-color:#d97706; border-left:none; }
+      .nav-comp-sub { padding:.4rem .65rem; border-left:none; border-bottom:2px solid transparent; font-size:.6rem; }
+      .nav-comp-sub.active { color:#d97706; border-bottom-color:#d97706; border-left:none; }
       .nav-divider { display:none; }
       .content { overflow:visible; padding:1.25rem 1rem; }
       .meta-grid { grid-template-columns:1fr; }
@@ -293,6 +300,8 @@
     <div class="nav-divider"></div>
     <nav class="nav-section">
       <button class="nav-item" onclick="switchPrimary('companies',this)">Companies &amp; Roles</button>
+      <button class="nav-comp-sub active" onclick="switchComp('us',this)">US Employers</button>
+      <button class="nav-comp-sub" onclick="switchComp('nl',this)">NL + US</button>
     </nav>
     <div class="nav-divider"></div>
     <nav class="nav-section">
@@ -372,12 +381,16 @@
 
   <!-- COMPANIES -->
   <div id="main-companies" class="main-panel">
-    <div class="cards" id="companies-list"></div>
-    <div class="panel-header" style="margin-top:3rem;border-top:1px solid #e5e7eb;padding-top:2rem;">
-      <div class="panel-title">NL + US</div>
-      <div class="panel-desc">Companies with confirmed offices in both the Netherlands and the United States. Relevant for an L-1 intracompany transfer path — join the NL office first, then transfer to the US after 12+ months.</div>
+    <div id="comp-us" class="comp-panel active">
+      <div class="cards" id="companies-list"></div>
     </div>
-    <div id="nl-companies-list"></div>
+    <div id="comp-nl" class="comp-panel">
+      <div class="panel-header">
+        <div class="panel-title">NL + US</div>
+        <div class="panel-desc">Companies with confirmed offices in both the Netherlands and the United States. Relevant for an L-1 intracompany transfer path — join the NL office first, then transfer to the US after 12+ months.</div>
+      </div>
+      <div id="nl-companies-list"></div>
+    </div>
   </div>
 
   <!-- DATA SCIENCE -->
@@ -716,6 +729,13 @@ function switchSec(name, btn) {
   document.querySelectorAll('.prog-panel').forEach(p=>p.classList.remove('active'));
   document.querySelectorAll('.nav-sub').forEach(b=>b.classList.remove('active'));
   document.getElementById('prog-'+name).classList.add('active');
+  btn.classList.add('active');
+}
+
+function switchComp(name, btn) {
+  document.querySelectorAll('.comp-panel').forEach(p=>p.classList.remove('active'));
+  document.querySelectorAll('.nav-comp-sub').forEach(b=>b.classList.remove('active'));
+  document.getElementById('comp-'+name).classList.add('active');
   btn.classList.add('active');
 }
 
