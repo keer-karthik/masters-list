@@ -302,10 +302,6 @@
     <nav class="nav-section">
       <button class="nav-item" onclick="switchPrimary('scholarships',this)">Scholarships</button>
     </nav>
-    <div class="nav-divider"></div>
-    <nav class="nav-section">
-      <button class="nav-item" onclick="switchPrimary('nl-companies',this)">NL + US Track</button>
-    </nav>
   </aside>
 
   <main class="content">
@@ -377,6 +373,11 @@
   <!-- COMPANIES -->
   <div id="main-companies" class="main-panel">
     <div class="cards" id="companies-list"></div>
+    <div class="panel-header" style="margin-top:3rem;border-top:1px solid #e5e7eb;padding-top:2rem;">
+      <div class="panel-title">NL + US</div>
+      <div class="panel-desc">Companies with confirmed offices in both the Netherlands and the United States. Relevant for an L-1 intracompany transfer path — join the NL office first, then transfer to the US after 12+ months.</div>
+    </div>
+    <div id="nl-companies-list"></div>
   </div>
 
   <!-- DATA SCIENCE -->
@@ -404,19 +405,6 @@
       <div class="panel-desc">External scholarships that can fund a master's degree at zero or near-zero cost. Separate from RA/TA funding — these are competitive grants applied to directly, usually after receiving admission. Tracked here because the goal is to complete a master's for the least possible dollar outlay.</div>
     </div>
     <div class="cards" id="scholarships-list"></div>
-  </div>
-
-  <!-- NL + US COMPANIES -->
-  <div id="main-nl-companies" class="main-panel">
-    <div class="panel-header">
-      <div class="panel-title">Target Companies — NL + US Presence</div>
-      <div class="panel-desc">Companies with confirmed offices in both the Netherlands and the United States. Relevant for an L-1 intracompany transfer path: join the NL office first, then transfer to the US after 12+ months. <strong style="color:#1d9e75;">Green = strong L-1 fit</strong> based on role alignment with energy quant / power market analyst profile.</div>
-    </div>
-    <div class="nl-legend">
-      <span><span class="nl-dot" style="background:#1d9e75;"></span>Strong L-1 fit</span>
-      <span><span class="nl-dot" style="background:#999;"></span>NL + US offices confirmed</span>
-    </div>
-    <div id="nl-companies-list"></div>
   </div>
 
   </main>
@@ -1045,7 +1033,7 @@ function buildResearch() {
 
 /* ─── NL + US COMPANIES ─── */
 const nlCompanySectors = [
-  {id:"storage",label:"Energy Storage",companies:[
+  {id:"storage",label:"Energy Storage",accent:"#22c55e",companies:[
     {icon:"⚡",name:"Fluence",note:"BESS systems + Mosaic dispatch software. Amsterdam + Arlington VA.",tags:[{t:"Storage + software",c:"nl-tag-type"},{t:"Strong L-1 fit",c:"nl-tag-l1"}]},
     {icon:"🔋",name:"Wärtsilä Energy",note:"GEMS optimization platform, grid-scale BESS. Drunen NL + 9 US locations.",tags:[{t:"Storage + software",c:"nl-tag-type"},{t:"Strong L-1 fit",c:"nl-tag-l1"}]},
     {icon:"🚗",name:"Tesla Energy",note:"Megapack, Powerwall, grid services. Amsterdam + multiple US offices.",tags:[{t:"Storage hardware",c:"nl-tag-type"}]},
@@ -1053,7 +1041,7 @@ const nlCompanySectors = [
     {icon:"⚙️",name:"GE Vernova",note:"Grid solutions, electrification, storage software stack.",tags:[{t:"Infrastructure",c:"nl-tag-type"}]},
     {icon:"🌊",name:"Vattenfall",note:"Swedish utility, large NL operations, growing BESS portfolio.",tags:[{t:"Utility + storage",c:"nl-tag-type"}]},
   ]},
-  {id:"analytics",label:"Energy Analytics & Market Intelligence",companies:[
+  {id:"analytics",label:"Energy Analytics & Market Intelligence",accent:"#8b5cf6",companies:[
     {icon:"📈",name:"Aurora Energy Research",note:"Power market forecasting, BESS valuation, AMUN/ORIGIN software.",tags:[{t:"Market analytics",c:"nl-tag-type"},{t:"Strong L-1 fit",c:"nl-tag-l1"}]},
     {icon:"📊",name:"BloombergNEF",note:"Storage economics, energy transition data, sector forecasting.",tags:[{t:"Market analytics",c:"nl-tag-type"},{t:"Strong L-1 fit",c:"nl-tag-l1"}]},
     {icon:"📉",name:"S&P Global Commodity Insights",note:"Commodity analytics, power market data, Platts.",tags:[{t:"Market analytics",c:"nl-tag-type"},{t:"Strong L-1 fit",c:"nl-tag-l1"}]},
@@ -1061,7 +1049,7 @@ const nlCompanySectors = [
     {icon:"🔍",name:"ICIS",note:"Rotterdam HQ, commodity and energy market pricing data.",tags:[{t:"Market data",c:"nl-tag-type"}]},
     {icon:"📡",name:"Platts Analytics (S&P)",note:"Power and gas market analytics arm of S&P Global.",tags:[{t:"Market data",c:"nl-tag-type"}]},
   ]},
-  {id:"utility",label:"Energy Utilities & IPPs",companies:[
+  {id:"utility",label:"Energy Utilities & IPPs",accent:"#f59e0b",companies:[
     {icon:"💧",name:"Statkraft",note:"Renewables, flexibility trading, European balancing markets.",tags:[{t:"Utility + trading",c:"nl-tag-type"}]},
     {icon:"🔥",name:"EDF Trading",note:"Power and gas trading, storage optimization, structured products.",tags:[{t:"Trading + utility",c:"nl-tag-type"}]},
     {icon:"🌍",name:"ENGIE",note:"Renewables, BESS, flexibility markets, large NL operations.",tags:[{t:"Utility + storage",c:"nl-tag-type"}]},
@@ -1070,7 +1058,7 @@ const nlCompanySectors = [
     {icon:"☀️",name:"TotalEnergies",note:"French energy major with large NL and US renewables + storage portfolio.",tags:[{t:"Utility + storage",c:"nl-tag-type"}]},
     {icon:"⚡",name:"Equinor",note:"Norwegian energy major, growing BESS and offshore wind in NL + US.",tags:[{t:"Utility + storage",c:"nl-tag-type"}]},
   ]},
-  {id:"trading",label:"Energy Trading (Commodities)",companies:[
+  {id:"trading",label:"Energy Trading (Commodities)",accent:"#ef4444",companies:[
     {icon:"↔️",name:"Vitol",note:"Founded Rotterdam 1966. Houston and Stamford offices. Power + gas + LNG.",tags:[{t:"Commodities",c:"nl-tag-type"}]},
     {icon:"↔️",name:"Trafigura",note:"Rotterdam presence, US offices, power and gas trading arm.",tags:[{t:"Commodities",c:"nl-tag-type"}]},
     {icon:"↔️",name:"Gunvor",note:"Houston + Stamford offices, Nyera renewables investment arm.",tags:[{t:"Commodities",c:"nl-tag-type"}]},
@@ -1078,14 +1066,14 @@ const nlCompanySectors = [
     {icon:"🏭",name:"Mercuria",note:"Geneva-HQ commodity trader, growing power and LNG book, NL + US offices.",tags:[{t:"Commodities",c:"nl-tag-type"}]},
     {icon:"🔁",name:"Castleton Commodities",note:"Stamford-based trader with European operations including NL.",tags:[{t:"Power trading",c:"nl-tag-type"}]},
   ]},
-  {id:"finance",label:"Project Finance & Infrastructure Investment",companies:[
+  {id:"finance",label:"Project Finance & Infrastructure Investment",accent:"#3b82f6",companies:[
     {icon:"🏦",name:"Macquarie Asset Management",note:"Amsterdam + US offices. Energy transition infrastructure fund, BESS investments.",tags:[{t:"Infra PE",c:"nl-tag-type"}]},
     {icon:"🌿",name:"Brookfield Renewable",note:"Amsterdam regional center, ~€3B AUM in NL, large US renewables + storage platform.",tags:[{t:"Infra PE",c:"nl-tag-type"}]},
     {icon:"⬛",name:"BlackRock",note:"BlackRock NL B.V. in Amsterdam, major energy infra investor globally.",tags:[{t:"Asset management",c:"nl-tag-type"}]},
     {icon:"🏗️",name:"ING Bank (Energy Finance)",note:"Amsterdam HQ, large energy project finance desk, US operations.",tags:[{t:"Project finance",c:"nl-tag-type"}]},
     {icon:"💼",name:"ABN AMRO (Energy)",note:"Amsterdam HQ, energy transition finance, US correspondent relationships.",tags:[{t:"Project finance",c:"nl-tag-type"}]},
   ]},
-  {id:"policy",label:"Policy, International Organizations & Think Tanks",companies:[
+  {id:"policy",label:"Policy, International Organizations & Think Tanks",accent:"#94a3b8",companies:[
     {icon:"🌐",name:"World Bank Group (IFC / ESMAP)",note:"Washington DC HQ + global. Energy storage, grid modernization, developing markets. ESMAP is the energy arm.",tags:[{t:"MDB / policy",c:"nl-tag-type"}]},
     {icon:"🏛️",name:"IEA",note:"Paris HQ, Amsterdam liaison office. Battery storage and power market work.",tags:[{t:"Intergovernmental",c:"nl-tag-type"}]},
     {icon:"☀️",name:"IRENA",note:"Abu Dhabi HQ. Netherlands is a founding member. Renewables and storage policy.",tags:[{t:"Intergovernmental",c:"nl-tag-type"}]},
@@ -1093,7 +1081,7 @@ const nlCompanySectors = [
     {icon:"🔬",name:"RMI (Rocky Mountain Institute)",note:"US nonprofit, active in 50+ countries, power sector decarbonization and storage.",tags:[{t:"Think tank",c:"nl-tag-type"}]},
     {icon:"🌍",name:"Energy Charter Secretariat",note:"Brussels-based, but NL is a key member. Energy investment treaty framework.",tags:[{t:"Policy",c:"nl-tag-type"}]},
   ]},
-  {id:"consulting",label:"Strategy Consulting (Energy Practice)",companies:[
+  {id:"consulting",label:"Strategy Consulting (Energy Practice)",accent:"#f97316",companies:[
     {icon:"📐",name:"McKinsey (Energy & Materials)",note:"Amsterdam + multiple US offices. Energy transition, grid modernization practice.",tags:[{t:"Consulting",c:"nl-tag-type"}]},
     {icon:"🔎",name:"Oliver Wyman (Energy)",note:"Amsterdam + US offices. Energy strategy, utilities, storage economics.",tags:[{t:"Consulting",c:"nl-tag-type"}]},
     {icon:"📐",name:"BCG (Climate & Energy)",note:"Amsterdam + multiple US offices. Energy transition strategy practice.",tags:[{t:"Consulting",c:"nl-tag-type"}]},
@@ -1105,26 +1093,40 @@ const nlCompanySectors = [
 function buildNLCompanies() {
   const container = document.getElementById('nl-companies-list');
   nlCompanySectors.forEach(sector => {
-    const label = document.createElement('div');
-    label.className = 'nl-section-label';
-    label.textContent = sector.label;
-    container.appendChild(label);
-    const grid = document.createElement('div');
-    grid.className = 'nl-grid';
-    sector.companies.forEach(co => {
-      const tagsHTML = co.tags.map(tag => `<span class="nl-tag ${tag.c}">${tag.t}</span>`).join('');
+    const group = document.createElement('div');
+    group.className = 'sector-group';
+    const hdr = document.createElement('div');
+    hdr.className = 'sector-header';
+    hdr.style.background = sector.accent + '22';
+    hdr.style.borderLeft = `3px solid ${sector.accent}`;
+    hdr.innerHTML = `<div class="sector-label" style="color:${sector.accent}">${sector.label}</div>`;
+    group.appendChild(hdr);
+    const cardsWrap = document.createElement('div');
+    cardsWrap.className = 'cards';
+    sector.companies.forEach((co, i) => {
+      const id = `nl-${sector.id}-${i}`;
+      const typeTag = co.tags[0]?.t || '';
+      const isL1 = co.tags.some(t => t.c === 'nl-tag-l1');
       const card = document.createElement('div');
-      card.className = `nl-card ${sector.id}`;
+      card.className = 'card company-card';
       card.innerHTML = `
-        <div class="nl-card-top">
-          <div class="nl-icon">${co.icon}</div>
-          <p class="nl-name">${co.name}</p>
-        </div>
-        <p class="nl-note">${co.note}</p>
-        <div class="nl-tags">${tagsHTML}</div>`;
-      grid.appendChild(card);
+        <button class="card-header" onclick="toggleCard('${id}')">
+          <div style="flex:1;min-width:0;">
+            <div style="display:flex;align-items:center;gap:.5rem;flex-wrap:wrap;">
+              <span class="co-name">${co.icon} ${co.name}</span>
+              <span class="co-type">${typeTag}</span>
+              ${isL1 ? `<span class="co-type" style="background:#dcfce7;color:#15803d;">Strong L-1 fit</span>` : ''}
+            </div>
+          </div>
+          <span class="toggle-icon" id="icon-${id}">+</span>
+        </button>
+        <div class="card-body" id="${id}">
+          <div class="note-box"><div class="field-value">${co.note}</div></div>
+        </div>`;
+      cardsWrap.appendChild(card);
     });
-    container.appendChild(grid);
+    group.appendChild(cardsWrap);
+    container.appendChild(group);
   });
 }
 
